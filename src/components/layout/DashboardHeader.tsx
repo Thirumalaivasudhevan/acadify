@@ -30,10 +30,10 @@ export const DashboardHeader: React.FC = () => {
         <SidebarTrigger className="hover-glow" />
         <div className="flex items-center space-x-3">
           <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center">
-            <span className="text-primary font-bold text-sm">CM</span>
+            <span className="text-primary font-bold text-sm">AC</span>
           </div>
           <div>
-            <h1 className="font-bold text-lg">College Management</h1>
+            <h1 className="font-bold text-lg">Acadify</h1>
             <p className="text-xs text-muted-foreground">Academic Dashboard</p>
           </div>
         </div>
