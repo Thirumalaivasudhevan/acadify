@@ -13,33 +13,39 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      (event, session) => {
         setSession(session);
         
         if (session?.user) {
-          // Fetch user profile from our profiles table
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('user_id', session.user.id)
-            .single();
-            
-          if (profile) {
-            const userData: User = {
-              id: profile.user_id,
-              name: profile.full_name,
-              email: profile.email,
-              role: profile.role as 'Admin' | 'Faculty' | 'Student',
-              active: true,
-              createdAt: profile.created_at,
-            };
-            setUser(userData);
-          }
+          // Defer profile fetch to avoid blocking the auth state change
+          setTimeout(async () => {
+            try {
+              const { data: profile } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('user_id', session.user.id)
+                .single();
+                
+              if (profile) {
+                const userData: User = {
+                  id: profile.user_id,
+                  name: profile.full_name,
+                  email: profile.email,
+                  role: profile.role as 'Admin' | 'Faculty' | 'Student',
+                  active: true,
+                  createdAt: profile.created_at,
+                };
+                setUser(userData);
+              }
+            } catch (error) {
+              console.error('Error fetching user profile:', error);
+            }
+            setIsLoading(false);
+          }, 0);
         } else {
           setUser(null);
+          setIsLoading(false);
         }
-        
-        setIsLoading(false);
       }
     );
 
