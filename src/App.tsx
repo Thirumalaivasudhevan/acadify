@@ -2,7 +2,6 @@ import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import LoginPage from "./components/auth/LoginPage";
@@ -25,15 +24,6 @@ import StudentTimetable from "./pages/student/StudentTimetable";
 import MyWorks from "./pages/student/MyWorks";
 import StudentAnnouncements from "./pages/student/StudentAnnouncements";
 import StudentRequests from "./pages/student/StudentRequests";
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: 1,
-      staleTime: 1000 * 60 * 5, // 5 minutes
-    },
-  },
-});
 
 const AppRoutes = () => {
   const { user, isLoading } = useAuth();
@@ -97,8 +87,8 @@ const AppRoutes = () => {
   );
 };
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
+const App = () => {
+  return (
     <BrowserRouter>
       <TooltipProvider>
         <AuthProvider>
@@ -108,7 +98,7 @@ const App = () => (
         </AuthProvider>
       </TooltipProvider>
     </BrowserRouter>
-  </QueryClientProvider>
-);
+  );
+};
 
 export default App;
