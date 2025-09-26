@@ -25,15 +25,25 @@ import MyWorks from "./pages/student/MyWorks";
 import StudentAnnouncements from "./pages/student/StudentAnnouncements";
 import StudentRequests from "./pages/student/StudentRequests";
 
-const queryClient = new QueryClient();
-
-const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { user } = useAuth();
-  return user ? <DashboardLayout>{children}</DashboardLayout> : <Navigate to="/login" />;
-};
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      staleTime: 1000 * 60 * 5, // 5 minutes
+    },
+  },
+});
 
 const AppRoutes = () => {
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   if (!user) {
     return (
@@ -45,57 +55,59 @@ const AppRoutes = () => {
   }
 
   return (
-    <Routes>
-      {/* Admin Routes */}
-      {user.role === 'Admin' && (
-        <>
-          <Route path="/" element={<Navigate to="/admin/faculty" />} />
-          <Route path="/admin/faculty" element={<ProtectedRoute><FacultyList /></ProtectedRoute>} />
-          <Route path="/admin/timetable/:facultyId" element={<ProtectedRoute><FacultyTimetable /></ProtectedRoute>} />
-          <Route path="/admin/announcements" element={<ProtectedRoute><AdminAnnouncements /></ProtectedRoute>} />
-          <Route path="/admin/users" element={<ProtectedRoute><UsersManagement /></ProtectedRoute>} />
-        </>
-      )}
+    <DashboardLayout>
+      <Routes>
+        {/* Admin Routes */}
+        {user.role === 'Admin' && (
+          <>
+            <Route path="/" element={<Navigate to="/admin/faculty" />} />
+            <Route path="/admin/faculty" element={<FacultyList />} />
+            <Route path="/admin/timetable/:facultyId" element={<FacultyTimetable />} />
+            <Route path="/admin/announcements" element={<AdminAnnouncements />} />
+            <Route path="/admin/users" element={<UsersManagement />} />
+          </>
+        )}
 
-      {/* Faculty Routes */}
-      {user.role === 'Faculty' && (
-        <>
-          <Route path="/" element={<Navigate to="/faculty/timetable" />} />
-          <Route path="/faculty/timetable" element={<ProtectedRoute><MyTimetable /></ProtectedRoute>} />
-          <Route path="/faculty/works" element={<ProtectedRoute><AssignWorks /></ProtectedRoute>} />
-          <Route path="/faculty/announcements" element={<ProtectedRoute><FacultyAnnouncements /></ProtectedRoute>} />
-          <Route path="/faculty/requests" element={<ProtectedRoute><FacultyRequests /></ProtectedRoute>} />
-        </>
-      )}
+        {/* Faculty Routes */}
+        {user.role === 'Faculty' && (
+          <>
+            <Route path="/" element={<Navigate to="/faculty/timetable" />} />
+            <Route path="/faculty/timetable" element={<MyTimetable />} />
+            <Route path="/faculty/works" element={<AssignWorks />} />
+            <Route path="/faculty/announcements" element={<FacultyAnnouncements />} />
+            <Route path="/faculty/requests" element={<FacultyRequests />} />
+          </>
+        )}
 
-      {/* Student Routes */}
-      {user.role === 'Student' && (
-        <>
-          <Route path="/" element={<Navigate to="/student/timetable" />} />
-          <Route path="/student/timetable" element={<ProtectedRoute><StudentTimetable /></ProtectedRoute>} />
-          <Route path="/student/works" element={<ProtectedRoute><MyWorks /></ProtectedRoute>} />
-          <Route path="/student/announcements" element={<ProtectedRoute><StudentAnnouncements /></ProtectedRoute>} />
-          <Route path="/student/requests" element={<ProtectedRoute><StudentRequests /></ProtectedRoute>} />
-        </>
-      )}
+        {/* Student Routes */}
+        {user.role === 'Student' && (
+          <>
+            <Route path="/" element={<Navigate to="/student/timetable" />} />
+            <Route path="/student/timetable" element={<StudentTimetable />} />
+            <Route path="/student/works" element={<MyWorks />} />
+            <Route path="/student/announcements" element={<StudentAnnouncements />} />
+            <Route path="/student/requests" element={<StudentRequests />} />
+          </>
+        )}
 
-      <Route path="*" element={<Navigate to="/" />} />
-    </Routes>
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
+    </DashboardLayout>
   );
 };
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
+  <BrowserRouter>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
         <AuthProvider>
           <AppRoutes />
         </AuthProvider>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
+        <Toaster />
+        <Sonner />
+      </TooltipProvider>
+    </QueryClientProvider>
+  </BrowserRouter>
 );
 
 export default App;
