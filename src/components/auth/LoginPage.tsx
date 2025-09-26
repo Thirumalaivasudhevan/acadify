@@ -6,45 +6,51 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui
 import { Label } from '../ui/label';
 import { useToast } from '../../hooks/use-toast';
 import { GraduationCap, Lock, Mail, Loader2 } from 'lucide-react';
-
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { login, isLoading } = useAuth();
-  const { toast } = useToast();
-
+  const {
+    login,
+    isLoading
+  } = useAuth();
+  const {
+    toast
+  } = useToast();
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     const success = await login(email, password);
-    
     if (success) {
       toast({
         title: "Welcome back!",
-        description: "You have been successfully logged in.",
+        description: "You have been successfully logged in."
       });
     } else {
       toast({
         title: "Login failed",
         description: "Invalid email or password. Please try again.",
-        variant: "destructive",
+        variant: "destructive"
       });
     }
   };
-
   const quickLogin = (role: 'admin' | 'faculty' | 'student') => {
     const credentials = {
-      admin: { email: 'admin@example.com', password: 'admin123' },
-      faculty: { email: 'faculty@example.com', password: 'faculty123' },
-      student: { email: 'student@example.com', password: 'student123' },
+      admin: {
+        email: 'admin@example.com',
+        password: 'admin123'
+      },
+      faculty: {
+        email: 'faculty@example.com',
+        password: 'faculty123'
+      },
+      student: {
+        email: 'student@example.com',
+        password: 'student123'
+      }
     };
-    
     setEmail(credentials[role].email);
     setPassword(credentials[role].password);
   };
-
-  return (
-    <div className="min-h-screen bg-animated flex items-center justify-center p-4">
+  return <div className="min-h-screen bg-animated flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 via-transparent to-purple-600/20" />
       
       <Card className="glass w-full max-w-md animate-scale-in relative">
@@ -55,9 +61,7 @@ const LoginPage = () => {
             </div>
           </div>
           <div className="space-y-2">
-            <CardTitle className="text-2xl font-bold text-center animate-fade-in">
-              College Management
-            </CardTitle>
+            <CardTitle className="text-2xl font-bold text-center animate-fade-in">Acadify</CardTitle>
             <CardDescription className="text-muted-foreground">
               Sign in to access your dashboard
             </CardDescription>
@@ -70,15 +74,7 @@ const LoginPage = () => {
               <Label htmlFor="email" className="text-sm font-medium">Email</Label>
               <div className="relative">
                 <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="Enter your email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="pl-10 glass"
-                  required
-                />
+                <Input id="email" type="email" placeholder="Enter your email" value={email} onChange={e => setEmail(e.target.value)} className="pl-10 glass" required />
               </div>
             </div>
             
@@ -86,26 +82,12 @@ const LoginPage = () => {
               <Label htmlFor="password" className="text-sm font-medium">Password</Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="Enter your password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="pl-10 glass"
-                  required
-                />
+                <Input id="password" type="password" placeholder="Enter your password" value={password} onChange={e => setPassword(e.target.value)} className="pl-10 glass" required />
               </div>
             </div>
             
-            <Button
-              type="submit"
-              className="w-full btn-luxury"
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : null}
+            <Button type="submit" className="w-full btn-luxury" disabled={isLoading}>
+              {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
               {isLoading ? 'Signing in...' : 'Sign In'}
             </Button>
           </form>
@@ -120,28 +102,13 @@ const LoginPage = () => {
           </div>
           
           <div className="grid grid-cols-3 gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => quickLogin('admin')}
-              className="btn-glass text-xs"
-            >
+            <Button variant="outline" size="sm" onClick={() => quickLogin('admin')} className="btn-glass text-xs">
               Admin
             </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => quickLogin('faculty')}
-              className="btn-glass text-xs"
-            >
+            <Button variant="outline" size="sm" onClick={() => quickLogin('faculty')} className="btn-glass text-xs">
               Faculty
             </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => quickLogin('student')}
-              className="btn-glass text-xs"
-            >
+            <Button variant="outline" size="sm" onClick={() => quickLogin('student')} className="btn-glass text-xs">
               Student
             </Button>
           </div>
@@ -151,8 +118,6 @@ const LoginPage = () => {
           </p>
         </CardContent>
       </Card>
-    </div>
-  );
+    </div>;
 };
-
 export default LoginPage;
