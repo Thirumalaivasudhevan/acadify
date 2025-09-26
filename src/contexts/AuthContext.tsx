@@ -1,84 +1,123 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User, AuthContextType } from '../types/auth';
+import { supabase } from '../integrations/supabase/client';
+import { Session } from '@supabase/supabase-js';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Mock users for demonstration
-const mockUsers: User[] = [
-  {
-    id: '1',
-    name: 'Admin User',
-    email: 'admin@example.com',
-    role: 'Admin',
-    active: true,
-    createdAt: '2024-01-01',
-  },
-  {
-    id: '2',
-    name: 'Dr. John Smith',
-    email: 'faculty@example.com',
-    role: 'Faculty',
-    active: true,
-    createdAt: '2024-01-01',
-    deptId: '1',
-  },
-  {
-    id: '3',
-    name: 'Alice Johnson',
-    email: 'student@example.com',
-    role: 'Student',
-    active: true,
-    createdAt: '2024-01-01',
-    deptId: '1',
-    rollNo: 'CS001',
-  },
-];
-
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check for stored session
-    const storedUser = localStorage.getItem('college_user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-    setIsLoading(false);
+    // Set up auth state listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        setSession(session);
+        
+        if (session?.user) {
+          // Fetch user profile from our profiles table
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('user_id', session.user.id)
+            .single();
+            
+          if (profile) {
+            const userData: User = {
+              id: profile.user_id,
+              name: profile.full_name,
+              email: profile.email,
+              role: profile.role as 'Admin' | 'Faculty' | 'Student',
+              active: true,
+              createdAt: profile.created_at,
+            };
+            setUser(userData);
+          }
+        } else {
+          setUser(null);
+        }
+        
+        setIsLoading(false);
+      }
+    );
+
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      if (!session) {
+        setIsLoading(false);
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {
     setIsLoading(true);
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
     
-    // Mock authentication
-    const foundUser = mockUsers.find(u => u.email === email);
-    const validPasswords: Record<string, string> = {
-      'admin@example.com': 'admin123',
-      'faculty@example.com': 'faculty123',
-      'student@example.com': 'student123',
-    };
-    
-    if (foundUser && validPasswords[email] === password) {
-      setUser(foundUser);
-      localStorage.setItem('college_user', JSON.stringify(foundUser));
+    if (error) {
       setIsLoading(false);
-      return true;
+      return false;
     }
     
-    setIsLoading(false);
-    return false;
+    return true;
+  };
+
+  const signUp = async (email: string, password: string, fullName: string, role: 'Faculty' | 'Student'): Promise<{ success: boolean; error?: string }> => {
+    setIsLoading(true);
+    
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/`
+        }
+      });
+      
+      if (error) {
+        setIsLoading(false);
+        return { success: false, error: error.message };
+      }
+      
+      if (data.user) {
+        // Create profile record
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .insert({
+            user_id: data.user.id,
+            full_name: fullName,
+            email: email,
+            role: role
+          });
+          
+        if (profileError) {
+          setIsLoading(false);
+          return { success: false, error: 'Failed to create profile' };
+        }
+      }
+      
+      setIsLoading(false);
+      return { success: true };
+    } catch (error) {
+      setIsLoading(false);
+      return { success: false, error: 'An unexpected error occurred' };
+    }
   };
 
   const logout = () => {
-    setUser(null);
-    localStorage.removeItem('college_user');
+    supabase.auth.signOut();
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, isLoading }}>
+    <AuthContext.Provider value={{ user, login, signUp, logout, isLoading }}>
       {children}
     </AuthContext.Provider>
   );
