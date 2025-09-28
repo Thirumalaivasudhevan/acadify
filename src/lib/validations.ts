@@ -34,9 +34,7 @@ export const signUpSchema = z.object({
     .min(1, { message: "Full name is required" })
     .max(100, { message: "Full name must be less than 100 characters" })
     .regex(/^[a-zA-Z\s]+$/, { message: "Full name can only contain letters and spaces" }),
-  role: z.enum(['Faculty', 'Student'], { 
-    errorMap: () => ({ message: "Please select a valid role" }) 
-  })
+  role: z.literal('Faculty').or(z.literal('Student'))
 });
 
 // Attendance validation schemas
@@ -49,9 +47,7 @@ export const attendanceSchema = z.object({
     .trim()
     .min(1, { message: "Subject is required" })
     .max(100, { message: "Subject must be less than 100 characters" }),
-  status: z.enum(['Present', 'Absent', 'Late'], {
-    errorMap: () => ({ message: "Invalid attendance status" })
-  }),
+  status: z.literal('Present').or(z.literal('Absent')).or(z.literal('Late')),
   remarks: z
     .string()
     .trim()

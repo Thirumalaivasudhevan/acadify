@@ -7,12 +7,6 @@ import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import LoginPage from "./components/auth/LoginPage";
 import DashboardLayout from "./components/layout/DashboardLayout";
 
-// Admin Pages
-import FacultyList from "./pages/admin/FacultyList";
-import FacultyTimetable from "./pages/admin/FacultyTimetable";
-import AdminAnnouncements from "./pages/admin/Announcements";
-import UsersManagement from "./pages/admin/Users";
-
 // Faculty Pages  
 import MyTimetable from "./pages/faculty/MyTimetable";
 import AssignWorks from "./pages/faculty/AssignWorks";
@@ -23,6 +17,7 @@ import FacultyRequests from "./pages/faculty/FacultyRequests";
 // Student Pages
 import StudentTimetable from "./pages/student/StudentTimetable";
 import MyWorks from "./pages/student/MyWorks";
+import MyAttendance from "./pages/student/MyAttendance";
 import StudentAnnouncements from "./pages/student/StudentAnnouncements";
 import StudentRequests from "./pages/student/StudentRequests";
 
@@ -49,17 +44,6 @@ const AppRoutes = () => {
   return (
     <DashboardLayout>
       <Routes>
-        {/* Admin Routes */}
-        {user.role === 'Admin' && (
-          <>
-            <Route path="/" element={<Navigate to="/admin/faculty" />} />
-            <Route path="/admin/faculty" element={<FacultyList />} />
-            <Route path="/admin/timetable/:facultyId" element={<FacultyTimetable />} />
-            <Route path="/admin/announcements" element={<AdminAnnouncements />} />
-            <Route path="/admin/users" element={<UsersManagement />} />
-          </>
-        )}
-
         {/* Faculty Routes */}
         {user.role === 'Faculty' && (
           <>
@@ -78,6 +62,7 @@ const AppRoutes = () => {
             <Route path="/" element={<Navigate to="/student/timetable" />} />
             <Route path="/student/timetable" element={<StudentTimetable />} />
             <Route path="/student/works" element={<MyWorks />} />
+            <Route path="/student/attendance" element={<MyAttendance />} />
             <Route path="/student/announcements" element={<StudentAnnouncements />} />
             <Route path="/student/requests" element={<StudentRequests />} />
           </>

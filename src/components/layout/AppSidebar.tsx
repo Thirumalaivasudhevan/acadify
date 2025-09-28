@@ -27,12 +27,6 @@ import {
 } from 'lucide-react';
 
 const navigationItems = {
-  Admin: [
-    { title: 'Faculty List', url: '/admin/faculty', icon: Users },
-    { title: 'Faculty Timetable', url: '/admin/timetable', icon: Calendar },
-    { title: 'Announcements', url: '/admin/announcements', icon: Megaphone },
-    { title: 'Users Management', url: '/admin/users', icon: UserCheck },
-  ],
   Faculty: [
     { title: 'My Timetable', url: '/faculty/timetable', icon: Calendar },
     { title: 'Assign Works', url: '/faculty/works', icon: ClipboardList },
@@ -43,6 +37,7 @@ const navigationItems = {
   Student: [
     { title: 'My Timetable', url: '/student/timetable', icon: Calendar },
     { title: 'My Works', url: '/student/works', icon: BookOpen },
+    { title: 'My Attendance', url: '/student/attendance', icon: UserCheck },
     { title: 'Announcements', url: '/student/announcements', icon: Megaphone },
     { title: 'Requests', url: '/student/requests', icon: MessageSquare },
   ],
@@ -116,7 +111,6 @@ export const AppSidebar: React.FC = () => {
               <p className="text-xs text-sidebar-foreground/70 mt-1">
                 {user.role === 'Student' && user.rollNo && `Roll: ${user.rollNo}`}
                 {user.role === 'Faculty' && 'Faculty Member'}
-                {user.role === 'Admin' && 'Administrator'}
               </p>
             </div>
           </div>

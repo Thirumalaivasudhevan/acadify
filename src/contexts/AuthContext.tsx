@@ -31,14 +31,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                   id: profile.user_id,
                   name: profile.full_name,
                   email: profile.email,
-                  role: profile.role as 'Admin' | 'Faculty' | 'Student',
+                  role: profile.role as 'Faculty' | 'Student',
                   active: true,
                   createdAt: profile.created_at,
                 };
                 setUser(userData);
               }
             } catch (error) {
-              console.error('Error fetching user profile:', error);
+              // Remove sensitive logging in production
+              setIsLoading(false);
             }
             setIsLoading(false);
           }, 0);
