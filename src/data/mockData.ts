@@ -15,19 +15,49 @@ export const departments: Department[] = [
   { id: '2', name: 'Electronics' },
   { id: '3', name: 'Mechanical' },
   { id: '4', name: 'Civil' },
+  { id: '5', name: 'BBA' },
 ];
 
 export const faculties: Faculty[] = [
   { id: '2', name: 'Dr. John Smith', email: 'faculty@example.com', department: 'Computer Science' },
   { id: '4', name: 'Prof. Sarah Wilson', email: 'sarah@college.edu', department: 'Electronics' },
   { id: '5', name: 'Dr. Michael Brown', email: 'michael@college.edu', department: 'Mechanical' },
+  { id: '6', name: 'Dr. Rajesh Kumar', email: 'rajesh@college.edu', department: 'BBA' },
 ];
 
 export const students: Student[] = [
+  // Computer Science Students
   { id: '3', name: 'Alice Johnson', rollNo: 'CS001', deptId: '1', email: 'student@example.com' },
-  { id: '6', name: 'Bob Davis', rollNo: 'CS002', deptId: '1', email: 'bob@college.edu' },
-  { id: '7', name: 'Carol White', rollNo: 'EC001', deptId: '2', email: 'carol@college.edu' },
-  { id: '8', name: 'David Lee', rollNo: 'ME001', deptId: '3', email: 'david@college.edu' },
+  { id: '7', name: 'Bob Davis', rollNo: 'CS002', deptId: '1', email: 'bob@college.edu' },
+  
+  // Electronics Students  
+  { id: '8', name: 'Carol White', rollNo: 'EC001', deptId: '2', email: 'carol@college.edu' },
+  
+  // Mechanical Students
+  { id: '9', name: 'David Lee', rollNo: 'ME001', deptId: '3', email: 'david@college.edu' },
+  
+  // BBA Students (from Excel data)
+  { id: '10', name: 'AMEERA SIDDIKA K', rollNo: '2325F0474', deptId: '5', email: '2325F0474.ameera_siddika_k@nandhaarts.org' },
+  { id: '11', name: 'ANAND T', rollNo: '2325F0475', deptId: '5', email: '2325F0475.anand_t@nandhaarts.org' },
+  { id: '12', name: 'ARPIT KUMAR MISHRA A', rollNo: '2325F0476', deptId: '5', email: '2325F0476.arpit_kumar_mishra_a@nandhaarts.org' },
+  { id: '13', name: 'ARUN K', rollNo: '2325F0477', deptId: '5', email: '2325F0477.arun_k@nandhaarts.org' },
+  { id: '14', name: 'ARUNESHWAR T', rollNo: '2325F0478', deptId: '5', email: '2325F0478.aruneshwar_t@nandhaarts.org' },
+  { id: '15', name: 'BALAKUMAR G', rollNo: '2325F0479', deptId: '5', email: '2325F0479.balakumar_g@nandhaarts.org' },
+  { id: '16', name: 'BARATH D', rollNo: '2325F0480', deptId: '5', email: '2325F0480.barath_d@nandhaarts.org' },
+  { id: '17', name: 'BARATH K', rollNo: '2325F0481', deptId: '5', email: '2325F0481.barath_k@nandhaarts.org' },
+  { id: '18', name: 'DEEPAK MANIKANDAN K', rollNo: '2325F0482', deptId: '5', email: '2325F0482.deepak_manikandan_k@nandhaarts.org' },
+  { id: '19', name: 'DHANANJAYAN B', rollNo: '2325F0483', deptId: '5', email: '2325F0483.dhananjayan_b@nandhaarts.org' },
+  { id: '20', name: 'DHANUSH N', rollNo: '2325F0484', deptId: '5', email: '2325F0484.dhanush_n@nandhaarts.org' },
+  { id: '21', name: 'DHARANEESH C', rollNo: '2325F0485', deptId: '5', email: '2325F0485.dharaneesh_c@nandhaarts.org' },
+  { id: '22', name: 'DHAYANANTHAN S', rollNo: '2325F0486', deptId: '5', email: '2325F0486.dhayananthan_s@nandhaarts.org' },
+  { id: '23', name: 'DIVIYADHARSINI S M', rollNo: '2325F0487', deptId: '5', email: '2325F0487.diviyadharsini_s_m@nandhaarts.org' },
+  { id: '24', name: 'ELAYABHARATHI K', rollNo: '2325F0488', deptId: '5', email: '2325F0488.elayabharathi_k@nandhaarts.org' },
+  { id: '25', name: 'GOPALKRISHNAN R', rollNo: '2325F0489', deptId: '5', email: '2325F0489.gopalkrishnan_r@nandhaarts.org' },
+  { id: '26', name: 'GOBINATH M', rollNo: '2325F0490', deptId: '5', email: '2325F0490.gobinath_m@nandhaarts.org' },
+  { id: '27', name: 'HARIHARAN G', rollNo: '2325F0491', deptId: '5', email: '2325F0491.hariharan_g@nandhaarts.org' },
+  { id: '28', name: 'HARINI V', rollNo: '2325F0492', deptId: '5', email: '2325F0492.harini_v@nandhaarts.org' },
+  { id: '29', name: 'IMRAN KHAN M', rollNo: '2325F0493', deptId: '5', email: '2325F0493.imran_khan_m@nandhaarts.org' },
+  { id: '30', name: 'JAGANATHAN V', rollNo: '2325F0494', deptId: '5', email: '2325F0494.jaganathan_v@nandhaarts.org' },
 ];
 
 const days: Day[] = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];

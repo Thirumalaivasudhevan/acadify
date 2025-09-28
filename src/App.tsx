@@ -16,6 +16,7 @@ import UsersManagement from "./pages/admin/Users";
 // Faculty Pages  
 import MyTimetable from "./pages/faculty/MyTimetable";
 import AssignWorks from "./pages/faculty/AssignWorks";
+import AttendancePage from "./pages/faculty/AttendancePage";
 import FacultyAnnouncements from "./pages/faculty/FacultyAnnouncements";
 import FacultyRequests from "./pages/faculty/FacultyRequests";
 
@@ -65,6 +66,7 @@ const AppRoutes = () => {
             <Route path="/" element={<Navigate to="/faculty/timetable" />} />
             <Route path="/faculty/timetable" element={<MyTimetable />} />
             <Route path="/faculty/works" element={<AssignWorks />} />
+            <Route path="/faculty/attendance" element={<AttendancePage />} />
             <Route path="/faculty/announcements" element={<FacultyAnnouncements />} />
             <Route path="/faculty/requests" element={<FacultyRequests />} />
           </>

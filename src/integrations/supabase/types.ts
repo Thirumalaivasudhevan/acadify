@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      attendance: {
+        Row: {
+          created_at: string
+          date: string
+          faculty_id: string
+          id: string
+          period: number
+          remarks: string | null
+          status: string
+          student_id: string
+          subject: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          date: string
+          faculty_id: string
+          id?: string
+          period: number
+          remarks?: string | null
+          status: string
+          student_id: string
+          subject: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          faculty_id?: string
+          id?: string
+          period?: number
+          remarks?: string | null
+          status?: string
+          student_id?: string
+          subject?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       faculty_profiles: {
         Row: {
           courses_managed: string[] | null

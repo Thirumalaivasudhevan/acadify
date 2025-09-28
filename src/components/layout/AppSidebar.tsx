@@ -36,6 +36,7 @@ const navigationItems = {
   Faculty: [
     { title: 'My Timetable', url: '/faculty/timetable', icon: Calendar },
     { title: 'Assign Works', url: '/faculty/works', icon: ClipboardList },
+    { title: 'Attendance', url: '/faculty/attendance', icon: UserCheck },
     { title: 'Announcements', url: '/faculty/announcements', icon: Megaphone },
     { title: 'Requests', url: '/faculty/requests', icon: MessageSquare },
   ],
