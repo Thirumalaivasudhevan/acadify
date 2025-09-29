@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_profiles: {
+        Row: {
+          access_level: string | null
+          admin_id: string | null
+          created_at: string
+          id: string
+          role_title: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          access_level?: string | null
+          admin_id?: string | null
+          created_at?: string
+          id?: string
+          role_title?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          access_level?: string | null
+          admin_id?: string | null
+          created_at?: string
+          id?: string
+          role_title?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       attendance: {
         Row: {
           created_at: string
@@ -91,9 +121,11 @@ export type Database = {
           courses_managed: string[] | null
           created_at: string
           department: string | null
+          designation: string | null
           faculty_id: string | null
           id: string
           office_hours: string | null
+          research_publications: string[] | null
           subjects_taught: string[] | null
           updated_at: string
           user_id: string
@@ -103,9 +135,11 @@ export type Database = {
           courses_managed?: string[] | null
           created_at?: string
           department?: string | null
+          designation?: string | null
           faculty_id?: string | null
           id?: string
           office_hours?: string | null
+          research_publications?: string[] | null
           subjects_taught?: string[] | null
           updated_at?: string
           user_id: string
@@ -115,9 +149,11 @@ export type Database = {
           courses_managed?: string[] | null
           created_at?: string
           department?: string | null
+          designation?: string | null
           faculty_id?: string | null
           id?: string
           office_hours?: string | null
+          research_publications?: string[] | null
           subjects_taught?: string[] | null
           updated_at?: string
           user_id?: string
@@ -128,27 +164,36 @@ export type Database = {
       profiles: {
         Row: {
           created_at: string
+          department: string | null
           email: string
           full_name: string
           id: string
+          phone: string | null
+          profile_photo_url: string | null
           role: Database["public"]["Enums"]["user_role"]
           updated_at: string
           user_id: string
         }
         Insert: {
           created_at?: string
+          department?: string | null
           email: string
           full_name: string
           id?: string
+          phone?: string | null
+          profile_photo_url?: string | null
           role: Database["public"]["Enums"]["user_role"]
           updated_at?: string
           user_id: string
         }
         Update: {
           created_at?: string
+          department?: string | null
           email?: string
           full_name?: string
           id?: string
+          phone?: string | null
+          profile_photo_url?: string | null
           role?: Database["public"]["Enums"]["user_role"]
           updated_at?: string
           user_id?: string
@@ -187,7 +232,9 @@ export type Database = {
       }
       student_profiles: {
         Row: {
+          achievements: string[] | null
           attendance_percentage: number | null
+          cgpa: number | null
           courses_enrolled: string[] | null
           created_at: string
           department: string | null
@@ -198,9 +245,12 @@ export type Database = {
           updated_at: string
           user_id: string
           year_of_study: number | null
+          year_semester: string | null
         }
         Insert: {
+          achievements?: string[] | null
           attendance_percentage?: number | null
+          cgpa?: number | null
           courses_enrolled?: string[] | null
           created_at?: string
           department?: string | null
@@ -211,9 +261,12 @@ export type Database = {
           updated_at?: string
           user_id: string
           year_of_study?: number | null
+          year_semester?: string | null
         }
         Update: {
+          achievements?: string[] | null
           attendance_percentage?: number | null
+          cgpa?: number | null
           courses_enrolled?: string[] | null
           created_at?: string
           department?: string | null
@@ -224,6 +277,7 @@ export type Database = {
           updated_at?: string
           user_id?: string
           year_of_study?: number | null
+          year_semester?: string | null
         }
         Relationships: []
       }

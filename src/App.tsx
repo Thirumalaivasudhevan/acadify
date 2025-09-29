@@ -22,6 +22,9 @@ import MyAttendance from "./pages/student/MyAttendance";
 import StudentAnnouncements from "./pages/student/StudentAnnouncements";
 import StudentRequests from "./pages/student/StudentRequests";
 
+// Shared Pages
+import ProfilePage from "./pages/ProfilePage";
+
 const AppRoutes = () => {
   const { user, isLoading } = useAuth();
 
@@ -69,6 +72,9 @@ const AppRoutes = () => {
             <Route path="/student/requests" element={<StudentRequests />} />
           </>
         )}
+
+        {/* Shared Routes */}
+        <Route path="/profile" element={<ProfilePage />} />
 
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
