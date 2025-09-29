@@ -24,6 +24,7 @@ import {
   FileText,
   Clock,
   GraduationCap,
+  Home,
 } from 'lucide-react';
 
 const navigationItems = {
@@ -35,6 +36,7 @@ const navigationItems = {
     { title: 'Requests', url: '/faculty/requests', icon: MessageSquare },
   ],
   Student: [
+    { title: 'Dashboard', url: '/student/dashboard', icon: Home },
     { title: 'My Timetable', url: '/student/timetable', icon: Calendar },
     { title: 'My Works', url: '/student/works', icon: BookOpen },
     { title: 'My Attendance', url: '/student/attendance', icon: UserCheck },

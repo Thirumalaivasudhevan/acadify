@@ -53,6 +53,39 @@ export type Database = {
         }
         Relationships: []
       }
+      department_news: {
+        Row: {
+          created_at: string
+          department_id: string
+          description: string
+          id: string
+          published_date: string
+          title: string
+          updated_at: string
+          url: string | null
+        }
+        Insert: {
+          created_at?: string
+          department_id: string
+          description: string
+          id?: string
+          published_date?: string
+          title: string
+          updated_at?: string
+          url?: string | null
+        }
+        Update: {
+          created_at?: string
+          department_id?: string
+          description?: string
+          id?: string
+          published_date?: string
+          title?: string
+          updated_at?: string
+          url?: string | null
+        }
+        Relationships: []
+      }
       faculty_profiles: {
         Row: {
           courses_managed: string[] | null
@@ -122,6 +155,36 @@ export type Database = {
         }
         Relationships: []
       }
+      quiz_questions: {
+        Row: {
+          correct_answer: string
+          created_at: string
+          department_id: string
+          id: string
+          options: Json
+          question: string
+          updated_at: string
+        }
+        Insert: {
+          correct_answer: string
+          created_at?: string
+          department_id: string
+          id?: string
+          options: Json
+          question: string
+          updated_at?: string
+        }
+        Update: {
+          correct_answer?: string
+          created_at?: string
+          department_id?: string
+          id?: string
+          options?: Json
+          question?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       student_profiles: {
         Row: {
           attendance_percentage: number | null
@@ -161,6 +224,33 @@ export type Database = {
           updated_at?: string
           user_id?: string
           year_of_study?: number | null
+        }
+        Relationships: []
+      }
+      student_quiz_responses: {
+        Row: {
+          created_at: string
+          id: string
+          points_earned: number
+          questions_answered: Json
+          quiz_date: string
+          student_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          points_earned?: number
+          questions_answered: Json
+          quiz_date?: string
+          student_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          points_earned?: number
+          questions_answered?: Json
+          quiz_date?: string
+          student_id?: string
         }
         Relationships: []
       }

@@ -15,6 +15,7 @@ import FacultyAnnouncements from "./pages/faculty/FacultyAnnouncements";
 import FacultyRequests from "./pages/faculty/FacultyRequests";
 
 // Student Pages
+import StudentDashboard from "./pages/student/StudentDashboard";
 import StudentTimetable from "./pages/student/StudentTimetable";
 import MyWorks from "./pages/student/MyWorks";
 import MyAttendance from "./pages/student/MyAttendance";
@@ -59,7 +60,8 @@ const AppRoutes = () => {
         {/* Student Routes */}
         {user.role === 'Student' && (
           <>
-            <Route path="/" element={<Navigate to="/student/timetable" />} />
+            <Route path="/" element={<Navigate to="/student/dashboard" />} />
+            <Route path="/student/dashboard" element={<StudentDashboard />} />
             <Route path="/student/timetable" element={<StudentTimetable />} />
             <Route path="/student/works" element={<MyWorks />} />
             <Route path="/student/attendance" element={<MyAttendance />} />
