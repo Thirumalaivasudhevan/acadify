@@ -79,13 +79,13 @@ const AppRoutes = () => {
 const App = () => {
   return (
     <BrowserRouter>
-      <TooltipProvider>
-        <AuthProvider>
+      <AuthProvider>
+        <TooltipProvider>
           <AppRoutes />
           <Toaster />
           <Sonner />
-        </AuthProvider>
-      </TooltipProvider>
+        </TooltipProvider>
+      </AuthProvider>
     </BrowserRouter>
   );
 };
