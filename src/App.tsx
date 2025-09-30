@@ -16,6 +16,9 @@ import FacultyRequests from "./pages/faculty/FacultyRequests";
 
 // Student Pages
 import StudentDashboard from "./pages/student/StudentDashboard";
+import QuizPage from "./pages/student/QuizPage";
+import NewsPage from "./pages/student/NewsPage";
+import AIChatPage from "./pages/student/AIChatPage";
 import StudentTimetable from "./pages/student/StudentTimetable";
 import MyWorks from "./pages/student/MyWorks";
 import MyAttendance from "./pages/student/MyAttendance";
@@ -65,6 +68,9 @@ const AppRoutes = () => {
           <>
             <Route path="/" element={<Navigate to="/student/dashboard" />} />
             <Route path="/student/dashboard" element={<StudentDashboard />} />
+            <Route path="/student/quiz" element={<QuizPage />} />
+            <Route path="/student/news" element={<NewsPage />} />
+            <Route path="/student/ai-chat" element={<AIChatPage />} />
             <Route path="/student/timetable" element={<StudentTimetable />} />
             <Route path="/student/works" element={<MyWorks />} />
             <Route path="/student/attendance" element={<MyAttendance />} />

@@ -25,6 +25,9 @@ import {
   Clock,
   GraduationCap,
   Home,
+  Brain,
+  Newspaper,
+  Bot,
 } from 'lucide-react';
 
 const navigationItems = {
@@ -37,6 +40,9 @@ const navigationItems = {
   ],
   Student: [
     { title: 'Dashboard', url: '/student/dashboard', icon: Home },
+    { title: 'Daily Quiz', url: '/student/quiz', icon: Brain },
+    { title: 'Department News', url: '/student/news', icon: Newspaper },
+    { title: 'AI Assistant', url: '/student/ai-chat', icon: Bot },
     { title: 'My Timetable', url: '/student/timetable', icon: Calendar },
     { title: 'My Works', url: '/student/works', icon: BookOpen },
     { title: 'My Attendance', url: '/student/attendance', icon: UserCheck },
