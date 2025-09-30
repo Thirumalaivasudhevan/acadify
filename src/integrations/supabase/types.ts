@@ -313,7 +313,23 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_quiz_questions_for_student: {
+        Args: { dept_id: string; question_limit?: number }
+        Returns: {
+          department_id: string
+          id: string
+          options: Json
+          question: string
+        }[]
+      }
+      validate_quiz_answers: {
+        Args: { question_ids: string[]; user_answers: string[] }
+        Returns: {
+          correct_answer: string
+          is_correct: boolean
+          question_id: string
+        }[]
+      }
     }
     Enums: {
       user_role: "Faculty" | "Student"

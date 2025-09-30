@@ -12,7 +12,6 @@ interface QuizQuestion {
   id: string;
   question: string;
   options: string[];
-  correct_answer: string;
 }
 
 interface QuizResponse {
@@ -77,20 +76,24 @@ const QuizWidget: React.FC = () => {
         return;
       }
 
-      // Get random questions for user's department
-      const { data: allQuestions } = await supabase
-        .from('quiz_questions')
-        .select('*')
-        .eq('department_id', getDepartmentId(studentProfile.department));
+      // Get random questions for user's department using secure function
+      const { data: allQuestions, error: questionsError } = await supabase
+        .rpc('get_quiz_questions_for_student', {
+          dept_id: getDepartmentId(studentProfile.department),
+          question_limit: 3
+        });
+
+      if (questionsError) {
+        console.error('Error fetching questions:', questionsError);
+        throw questionsError;
+      }
 
       if (allQuestions && allQuestions.length > 0) {
-        // Select 3 random questions and properly type them
-        const shuffled = allQuestions.sort(() => 0.5 - Math.random());
-        const selectedQuestions = shuffled.slice(0, Math.min(3, shuffled.length)).map(q => ({
+        // Map questions to proper format
+        const selectedQuestions = allQuestions.map((q: any) => ({
           id: q.id,
           question: q.question,
-          options: Array.isArray(q.options) ? q.options : JSON.parse(q.options as string),
-          correct_answer: q.correct_answer
+          options: Array.isArray(q.options) ? q.options : JSON.parse(q.options as string)
         }));
         setQuestions(selectedQuestions);
         setUserAnswers(new Array(selectedQuestions.length).fill(''));
@@ -152,16 +155,28 @@ const QuizWidget: React.FC = () => {
     try {
       setSubmitting(true);
 
-      // Calculate points
+      // Validate answers using secure server-side function
+      const questionIds = questions.map(q => q.id);
+      const { data: validationResults, error: validationError } = await supabase
+        .rpc('validate_quiz_answers', {
+          question_ids: questionIds,
+          user_answers: userAnswers
+        });
+
+      if (validationError) {
+        console.error('Validation error:', validationError);
+        throw validationError;
+      }
+
+      // Calculate points from validation results
       let points = 0;
-      const answeredQuestions = questions.map((question, index) => {
-        const isCorrect = userAnswers[index] === question.correct_answer;
-        if (isCorrect) points += 10;
+      const answeredQuestions = validationResults.map((result: any) => {
+        if (result.is_correct) points += 10;
         return {
-          question_id: question.id,
-          user_answer: userAnswers[index],
-          correct_answer: question.correct_answer,
-          is_correct: isCorrect
+          question_id: result.question_id,
+          user_answer: userAnswers[questionIds.indexOf(result.question_id)],
+          correct_answer: result.correct_answer,
+          is_correct: result.is_correct
         };
       });
 
