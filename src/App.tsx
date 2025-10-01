@@ -7,6 +7,9 @@ import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import LoginPage from "./components/auth/LoginPage";
 import DashboardLayout from "./components/layout/DashboardLayout";
 
+// Admin Pages
+import AdminDashboard from "./pages/admin/AdminDashboard";
+
 // Faculty Pages  
 import MyTimetable from "./pages/faculty/MyTimetable";
 import AssignWorks from "./pages/faculty/AssignWorks";
@@ -24,6 +27,12 @@ import MyWorks from "./pages/student/MyWorks";
 import MyAttendance from "./pages/student/MyAttendance";
 import StudentAnnouncements from "./pages/student/StudentAnnouncements";
 import StudentRequests from "./pages/student/StudentRequests";
+
+// Parent Pages
+import ParentDashboard from "./pages/parent/ParentDashboard";
+
+// Support Pages
+import SupportDashboard from "./pages/support/SupportDashboard";
 
 // Shared Pages
 import ProfilePage from "./pages/ProfilePage";
@@ -51,6 +60,14 @@ const AppRoutes = () => {
   return (
     <DashboardLayout>
       <Routes>
+        {/* Admin Routes */}
+        {user.role === 'Admin' && (
+          <>
+            <Route path="/" element={<Navigate to="/admin/dashboard" />} />
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          </>
+        )}
+
         {/* Faculty Routes */}
         {user.role === 'Faculty' && (
           <>
@@ -76,6 +93,22 @@ const AppRoutes = () => {
             <Route path="/student/attendance" element={<MyAttendance />} />
             <Route path="/student/announcements" element={<StudentAnnouncements />} />
             <Route path="/student/requests" element={<StudentRequests />} />
+          </>
+        )}
+
+        {/* Parent Routes */}
+        {user.role === 'Parent' && (
+          <>
+            <Route path="/" element={<Navigate to="/parent/dashboard" />} />
+            <Route path="/parent/dashboard" element={<ParentDashboard />} />
+          </>
+        )}
+
+        {/* Support Routes */}
+        {user.role === 'Support' && (
+          <>
+            <Route path="/" element={<Navigate to="/support/dashboard" />} />
+            <Route path="/support/dashboard" element={<SupportDashboard />} />
           </>
         )}
 

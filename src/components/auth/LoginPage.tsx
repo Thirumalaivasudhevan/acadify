@@ -13,7 +13,7 @@ const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
-  const [role, setRole] = useState<'Faculty' | 'Student'>('Student');
+  const [role, setRole] = useState<'Faculty' | 'Student' | 'Admin' | 'Parent' | 'Support'>('Student');
   const { login, signUp, isLoading } = useAuth();
   const { toast } = useToast();
 
@@ -106,13 +106,16 @@ const LoginPage = () => {
                 
                 <div className="space-y-2">
                   <Label htmlFor="role" className="text-sm font-medium">Role</Label>
-                  <Select value={role} onValueChange={(value: 'Faculty' | 'Student') => setRole(value)}>
+                  <Select value={role} onValueChange={(value: 'Faculty' | 'Student' | 'Admin' | 'Parent' | 'Support') => setRole(value)}>
                     <SelectTrigger className="glass">
                       <SelectValue placeholder="Select your role" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="Student">Student</SelectItem>
                       <SelectItem value="Faculty">Faculty</SelectItem>
+                      <SelectItem value="Admin">Admin</SelectItem>
+                      <SelectItem value="Parent">Parent</SelectItem>
+                      <SelectItem value="Support">Support</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

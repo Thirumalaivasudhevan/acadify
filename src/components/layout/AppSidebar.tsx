@@ -31,6 +31,13 @@ import {
 } from 'lucide-react';
 
 const navigationItems = {
+  Admin: [
+    { title: 'Dashboard', url: '/admin/dashboard', icon: Home },
+    { title: 'Manage Departments', url: '/admin/departments', icon: Settings },
+    { title: 'Manage Faculty', url: '/admin/faculty', icon: Users },
+    { title: 'Manage Students', url: '/admin/students', icon: GraduationCap },
+    { title: 'Analytics', url: '/admin/analytics', icon: Clock },
+  ],
   Faculty: [
     { title: 'My Timetable', url: '/faculty/timetable', icon: Calendar },
     { title: 'Assign Works', url: '/faculty/works', icon: ClipboardList },
@@ -48,6 +55,18 @@ const navigationItems = {
     { title: 'My Attendance', url: '/student/attendance', icon: UserCheck },
     { title: 'Announcements', url: '/student/announcements', icon: Megaphone },
     { title: 'Requests', url: '/student/requests', icon: MessageSquare },
+  ],
+  Parent: [
+    { title: 'Dashboard', url: '/parent/dashboard', icon: Home },
+    { title: 'Children', url: '/parent/children', icon: Users },
+    { title: 'Fees', url: '/parent/fees', icon: FileText },
+    { title: 'Attendance', url: '/parent/attendance', icon: UserCheck },
+    { title: 'Leave Requests', url: '/parent/leave', icon: MessageSquare },
+  ],
+  Support: [
+    { title: 'Dashboard', url: '/support/dashboard', icon: Home },
+    { title: 'Tickets', url: '/support/tickets', icon: MessageSquare },
+    { title: 'Organizations', url: '/support/organizations', icon: Settings },
   ],
 };
 
@@ -119,6 +138,9 @@ export const AppSidebar: React.FC = () => {
               <p className="text-xs text-sidebar-foreground/70 mt-1">
                 {user.role === 'Student' && user.rollNo && `Roll: ${user.rollNo}`}
                 {user.role === 'Faculty' && 'Faculty Member'}
+                {user.role === 'Admin' && 'Administrator'}
+                {user.role === 'Parent' && 'Parent Portal'}
+                {user.role === 'Support' && 'Support Team'}
               </p>
             </div>
           </div>
