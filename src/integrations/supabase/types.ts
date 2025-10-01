@@ -44,6 +44,42 @@ export type Database = {
         }
         Relationships: []
       }
+      announcements: {
+        Row: {
+          content: string
+          created_at: string | null
+          created_by: string
+          department: string | null
+          expires_at: string | null
+          id: string
+          priority: string | null
+          target_role: string
+          title: string
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          created_by: string
+          department?: string | null
+          expires_at?: string | null
+          id?: string
+          priority?: string | null
+          target_role: string
+          title: string
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          created_by?: string
+          department?: string | null
+          expires_at?: string | null
+          id?: string
+          priority?: string | null
+          target_role?: string
+          title?: string
+        }
+        Relationships: []
+      }
       attendance: {
         Row: {
           created_at: string
@@ -161,13 +197,163 @@ export type Database = {
         }
         Relationships: []
       }
+      fees: {
+        Row: {
+          academic_year: string | null
+          amount: number
+          created_at: string | null
+          due_date: string
+          fee_type: string
+          id: string
+          paid_date: string | null
+          remarks: string | null
+          semester: string | null
+          status: string
+          student_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          academic_year?: string | null
+          amount: number
+          created_at?: string | null
+          due_date: string
+          fee_type: string
+          id?: string
+          paid_date?: string | null
+          remarks?: string | null
+          semester?: string | null
+          status?: string
+          student_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          academic_year?: string | null
+          amount?: number
+          created_at?: string | null
+          due_date?: string
+          fee_type?: string
+          id?: string
+          paid_date?: string | null
+          remarks?: string | null
+          semester?: string | null
+          status?: string
+          student_id?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      leave_requests: {
+        Row: {
+          approved_by: string | null
+          created_at: string | null
+          end_date: string
+          id: string
+          reason: string
+          remarks: string | null
+          start_date: string
+          status: string | null
+          student_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          approved_by?: string | null
+          created_at?: string | null
+          end_date: string
+          id?: string
+          reason: string
+          remarks?: string | null
+          start_date: string
+          status?: string | null
+          student_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          approved_by?: string | null
+          created_at?: string | null
+          end_date?: string
+          id?: string
+          reason?: string
+          remarks?: string | null
+          start_date?: string
+          status?: string | null
+          student_id?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      organizations: {
+        Row: {
+          address: string | null
+          created_at: string | null
+          email: string
+          id: string
+          name: string
+          phone: string | null
+          subscription_status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string | null
+          email: string
+          id?: string
+          name: string
+          phone?: string | null
+          subscription_status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          address?: string | null
+          created_at?: string | null
+          email?: string
+          id?: string
+          name?: string
+          phone?: string | null
+          subscription_status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      parent_profiles: {
+        Row: {
+          created_at: string | null
+          emergency_contact: string | null
+          id: string
+          occupation: string | null
+          parent_id: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          emergency_contact?: string | null
+          id?: string
+          occupation?: string | null
+          parent_id?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          emergency_contact?: string | null
+          id?: string
+          occupation?: string | null
+          parent_id?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
+          address: string | null
           created_at: string
+          date_of_birth: string | null
           department: string | null
           email: string
           full_name: string
           id: string
+          organization_id: string | null
           phone: string | null
           profile_photo_url: string | null
           role: Database["public"]["Enums"]["user_role"]
@@ -175,11 +361,14 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          address?: string | null
           created_at?: string
+          date_of_birth?: string | null
           department?: string | null
           email: string
           full_name: string
           id?: string
+          organization_id?: string | null
           phone?: string | null
           profile_photo_url?: string | null
           role: Database["public"]["Enums"]["user_role"]
@@ -187,18 +376,29 @@ export type Database = {
           user_id: string
         }
         Update: {
+          address?: string | null
           created_at?: string
+          date_of_birth?: string | null
           department?: string | null
           email?: string
           full_name?: string
           id?: string
+          organization_id?: string | null
           phone?: string | null
           profile_photo_url?: string | null
           role?: Database["public"]["Enums"]["user_role"]
           updated_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       quiz_questions: {
         Row: {
@@ -227,6 +427,33 @@ export type Database = {
           options?: Json
           question?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      student_parent_mapping: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_primary: boolean | null
+          parent_id: string
+          relationship: string
+          student_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_primary?: boolean | null
+          parent_id: string
+          relationship: string
+          student_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_primary?: boolean | null
+          parent_id?: string
+          relationship?: string
+          student_id?: string
         }
         Relationships: []
       }
@@ -308,6 +535,36 @@ export type Database = {
         }
         Relationships: []
       }
+      support_profiles: {
+        Row: {
+          access_level: string | null
+          created_at: string | null
+          id: string
+          specialization: string | null
+          support_id: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          access_level?: string | null
+          created_at?: string | null
+          id?: string
+          specialization?: string | null
+          support_id?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          access_level?: string | null
+          created_at?: string | null
+          id?: string
+          specialization?: string | null
+          support_id?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -332,7 +589,7 @@ export type Database = {
       }
     }
     Enums: {
-      user_role: "Faculty" | "Student"
+      user_role: "Faculty" | "Student" | "Admin" | "Parent" | "Support"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -460,7 +717,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      user_role: ["Faculty", "Student"],
+      user_role: ["Faculty", "Student", "Admin", "Parent", "Support"],
     },
   },
 } as const
