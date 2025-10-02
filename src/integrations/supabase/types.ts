@@ -80,6 +80,39 @@ export type Database = {
         }
         Relationships: []
       }
+      approval_requests: {
+        Row: {
+          approver_id: string | null
+          created_at: string
+          id: string
+          remarks: string | null
+          requested_role: Database["public"]["Enums"]["app_role"]
+          status: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          approver_id?: string | null
+          created_at?: string
+          id?: string
+          remarks?: string | null
+          requested_role: Database["public"]["Enums"]["app_role"]
+          status?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          approver_id?: string | null
+          created_at?: string
+          id?: string
+          remarks?: string | null
+          requested_role?: Database["public"]["Enums"]["app_role"]
+          status?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       attendance: {
         Row: {
           created_at: string
@@ -314,6 +347,36 @@ export type Database = {
         }
         Relationships: []
       }
+      otp_verifications: {
+        Row: {
+          created_at: string
+          id: string
+          is_verified: boolean | null
+          otp_code: string
+          otp_expiry: string
+          user_id: string
+          verification_type: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_verified?: boolean | null
+          otp_code: string
+          otp_expiry: string
+          user_id: string
+          verification_type: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_verified?: boolean | null
+          otp_code?: string
+          otp_expiry?: string
+          user_id?: string
+          verification_type?: string
+        }
+        Relationships: []
+      }
       parent_profiles: {
         Row: {
           created_at: string | null
@@ -347,12 +410,17 @@ export type Database = {
       profiles: {
         Row: {
           address: string | null
+          approval_status: string | null
+          approved_at: string | null
+          approved_by: string | null
           created_at: string
           date_of_birth: string | null
           department: string | null
           email: string
           full_name: string
+          google_auth_id: string | null
           id: string
+          is_verified: boolean | null
           organization_id: string | null
           phone: string | null
           profile_photo_url: string | null
@@ -362,12 +430,17 @@ export type Database = {
         }
         Insert: {
           address?: string | null
+          approval_status?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
           created_at?: string
           date_of_birth?: string | null
           department?: string | null
           email: string
           full_name: string
+          google_auth_id?: string | null
           id?: string
+          is_verified?: boolean | null
           organization_id?: string | null
           phone?: string | null
           profile_photo_url?: string | null
@@ -377,12 +450,17 @@ export type Database = {
         }
         Update: {
           address?: string | null
+          approval_status?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
           created_at?: string
           date_of_birth?: string | null
           department?: string | null
           email?: string
           full_name?: string
+          google_auth_id?: string | null
           id?: string
+          is_verified?: boolean | null
           organization_id?: string | null
           phone?: string | null
           profile_photo_url?: string | null
@@ -565,11 +643,36 @@ export type Database = {
         }
         Relationships: []
       }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      approve_user: {
+        Args: { _approver_id: string; _request_id: string; _user_id: string }
+        Returns: boolean
+      }
       get_quiz_questions_for_student: {
         Args: { dept_id: string; question_limit?: number }
         Returns: {
@@ -578,6 +681,26 @@ export type Database = {
           options: Json
           question: string
         }[]
+      }
+      get_user_role: {
+        Args: { _user_id: string }
+        Returns: Database["public"]["Enums"]["app_role"]
+      }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      reject_user: {
+        Args: {
+          _approver_id: string
+          _remarks: string
+          _request_id: string
+          _user_id: string
+        }
+        Returns: boolean
       }
       validate_quiz_answers: {
         Args: { question_ids: string[]; user_answers: string[] }
@@ -589,6 +712,13 @@ export type Database = {
       }
     }
     Enums: {
+      app_role:
+        | "super_admin"
+        | "admin"
+        | "staff"
+        | "student"
+        | "parent"
+        | "support"
       user_role: "Faculty" | "Student" | "Admin" | "Parent" | "Support"
     }
     CompositeTypes: {
@@ -717,6 +847,14 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      app_role: [
+        "super_admin",
+        "admin",
+        "staff",
+        "student",
+        "parent",
+        "support",
+      ],
       user_role: ["Faculty", "Student", "Admin", "Parent", "Support"],
     },
   },

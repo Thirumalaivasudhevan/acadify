@@ -5,66 +5,134 @@ import { Input } from '../ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Label } from '../ui/label';
 import { useToast } from '../../hooks/use-toast';
-import { GraduationCap, Lock, Mail, Loader2, User } from 'lucide-react';
+import { GraduationCap, Lock, Mail, Loader2, User, ArrowRight } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import type { AppRole } from '../../types/auth';
+import RoleSelection from './RoleSelection';
+import RegistrationForm, { RegistrationData } from './RegistrationForm';
+import OTPVerification from './OTPVerification';
+import VerificationPending from './VerificationPending';
 
 const LoginPage = () => {
-  const [isSignUp, setIsSignUp] = useState(false);
+  const [view, setView] = useState<'login' | 'role-select' | 'register' | 'otp' | 'pending'>('login');
+  const [selectedRole, setSelectedRole] = useState<AppRole | null>(null);
+  const [registrationData, setRegistrationData] = useState<RegistrationData | null>(null);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [fullName, setFullName] = useState('');
-  const [role, setRole] = useState<'Faculty' | 'Student' | 'Admin' | 'Parent' | 'Support'>('Student');
-  const { login, signUp, isLoading } = useAuth();
+  const { login, signUp, isLoading, approvalStatus } = useAuth();
   const { toast } = useToast();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // If user is logged in but not approved, show verification pending
+  if (approvalStatus === 'pending' || approvalStatus === 'rejected') {
+    return (
+      <VerificationPending
+        role={selectedRole || 'student'}
+        status={approvalStatus}
+        onLogout={() => {
+          // Implement logout
+          setView('login');
+        }}
+      />
+    );
+  }
+
+  const handleRoleSelect = (role: AppRole) => {
+    setSelectedRole(role);
+    setView('register');
+  };
+
+  const handleRegistrationSubmit = async (data: RegistrationData) => {
+    setRegistrationData(data);
     
-    if (isSignUp) {
-      if (!fullName.trim()) {
-        toast({
-          title: "Error",
-          description: "Please enter your full name.",
-          variant: "destructive"
-        });
-        return;
-      }
-      
-      const result = await signUp(email, password, fullName, role);
-      if (result.success) {
-        toast({
-          title: "Account created!",
-          description: "Your account has been created successfully. You can now sign in."
-        });
-        setIsSignUp(false);
-        // Clear form
-        setEmail('');
-        setPassword('');
-        setFullName('');
-      } else {
-        toast({
-          title: "Sign up failed",
-          description: result.error || "An error occurred during sign up.",
-          variant: "destructive"
-        });
-      }
+    // For now, skip OTP and proceed directly to signup
+    // In production, you would send OTP here
+    const result = await signUp(
+      data.email,
+      data.password,
+      data.fullName,
+      selectedRole!,
+      data.department
+    );
+    
+    if (result.success) {
+      toast({
+        title: "Registration Successful!",
+        description: "Your registration is pending approval. You'll be notified via email.",
+      });
+      setView('pending');
     } else {
-      const success = await login(email, password);
-      if (success) {
-        toast({
-          title: "Welcome back!",
-          description: "You have been successfully logged in."
-        });
-      } else {
-        toast({
-          title: "Login failed",
-          description: "Invalid email or password. Please try again.",
-          variant: "destructive"
-        });
-      }
+      throw new Error(result.error || 'Registration failed');
     }
   };
 
+  const handleOTPVerify = async (otp: string): Promise<boolean> => {
+    // Implement OTP verification logic
+    // For now, always return true
+    return true;
+  };
+
+  const handleOTPResend = async () => {
+    // Implement OTP resend logic
+    toast({
+      title: "OTP Sent",
+      description: "A new OTP has been sent to your email.",
+    });
+  };
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    const success = await login(email, password);
+    if (success) {
+      toast({
+        title: "Welcome back!",
+        description: "You have been successfully logged in."
+      });
+    } else {
+      toast({
+        title: "Login failed",
+        description: "Invalid email or password. Please try again.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  // Show appropriate view based on state
+  if (view === 'role-select') {
+    return <RoleSelection onSelectRole={handleRoleSelect} />;
+  }
+
+  if (view === 'register' && selectedRole) {
+    return (
+      <RegistrationForm
+        role={selectedRole}
+        onBack={() => setView('role-select')}
+        onSubmit={handleRegistrationSubmit}
+      />
+    );
+  }
+
+  if (view === 'otp' && registrationData) {
+    return (
+      <OTPVerification
+        email={registrationData.email}
+        onVerify={handleOTPVerify}
+        onResend={handleOTPResend}
+      />
+    );
+  }
+
+  if (view === 'pending' && selectedRole) {
+    return (
+      <VerificationPending
+        role={selectedRole}
+        status="pending"
+        onLogout={() => setView('login')}
+      />
+    );
+  }
+
+  // Login view
   return (
     <div className="min-h-screen bg-animated flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 via-transparent to-purple-600/20" />
@@ -79,49 +147,13 @@ const LoginPage = () => {
           <div className="space-y-2">
             <CardTitle className="text-2xl font-bold text-center animate-fade-in">Acadify</CardTitle>
             <CardDescription className="text-muted-foreground">
-              {isSignUp ? "Create your account" : "Sign in to access your dashboard"}
+              Sign in to access your dashboard
             </CardDescription>
           </div>
         </CardHeader>
         
         <CardContent className="space-y-6">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {isSignUp && (
-              <>
-                <div className="space-y-2">
-                  <Label htmlFor="fullName" className="text-sm font-medium">Full Name</Label>
-                  <div className="relative">
-                    <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      id="fullName"
-                      type="text"
-                      placeholder="Enter your full name"
-                      value={fullName}
-                      onChange={(e) => setFullName(e.target.value)}
-                      className="pl-10 glass"
-                      required
-                    />
-                  </div>
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="role" className="text-sm font-medium">Role</Label>
-                  <Select value={role} onValueChange={(value: 'Faculty' | 'Student' | 'Admin' | 'Parent' | 'Support') => setRole(value)}>
-                    <SelectTrigger className="glass">
-                      <SelectValue placeholder="Select your role" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Student">Student</SelectItem>
-                      <SelectItem value="Faculty">Faculty</SelectItem>
-                      <SelectItem value="Admin">Admin</SelectItem>
-                      <SelectItem value="Parent">Parent</SelectItem>
-                      <SelectItem value="Support">Support</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </>
-            )}
-            
+          <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email" className="text-sm font-medium">Email</Label>
               <div className="relative">
@@ -156,23 +188,29 @@ const LoginPage = () => {
             
             <Button type="submit" className="w-full btn-luxury" disabled={isLoading}>
               {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-              {isLoading ? (isSignUp ? 'Creating account...' : 'Signing in...') : (isSignUp ? 'Create Account' : 'Sign In')}
+              {isLoading ? 'Signing in...' : 'Sign In'}
             </Button>
           </form>
           
-          <div className="text-center">
+          <div className="text-center space-y-2">
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted-foreground">
+                  New user?
+                </span>
+              </div>
+            </div>
+            
             <Button
-              variant="ghost"
-              onClick={() => {
-                setIsSignUp(!isSignUp);
-                // Clear form when switching
-                setEmail('');
-                setPassword('');
-                setFullName('');
-              }}
-              className="text-sm"
+              variant="outline"
+              onClick={() => setView('role-select')}
+              className="w-full"
             >
-              {isSignUp ? 'Already have an account? Sign in' : "Don't have an account? Sign up"}
+              Register for an Account
+              <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </div>
         </CardContent>
