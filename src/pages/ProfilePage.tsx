@@ -89,17 +89,35 @@ const ProfilePage: React.FC = () => {
 
       if (profileError) throw profileError;
 
+      // Get role from user_roles table (secure)
+      const { data: userRole } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', user?.id)
+        .single();
+
+      // Map app_role to display role
+      const roleMap: Record<string, string> = {
+        'super_admin': 'Admin',
+        'admin': 'Admin',
+        'staff': 'Faculty',
+        'student': 'Student',
+        'parent': 'Parent',
+        'support': 'Support'
+      };
+      const displayRole = userRole ? roleMap[userRole.role] : 'Student';
+
       let roleSpecificData = {};
 
       // Get role-specific data
-      if (profile.role === 'Student') {
+      if (displayRole === 'Student') {
         const { data: studentData } = await supabase
           .from('student_profiles')
           .select('*')
           .eq('user_id', user?.id)
           .single();
         roleSpecificData = studentData || {};
-      } else if (profile.role === 'Faculty') {
+      } else if (displayRole === 'Faculty') {
         const { data: facultyData } = await supabase
           .from('faculty_profiles')
           .select('*')
@@ -110,6 +128,7 @@ const ProfilePage: React.FC = () => {
 
       setProfileData({
         ...profile,
+        role: displayRole,
         ...roleSpecificData
       });
     } catch (error) {

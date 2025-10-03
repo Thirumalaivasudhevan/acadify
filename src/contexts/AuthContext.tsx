@@ -42,6 +42,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                     .single();
                   
                   const primaryRole = userRoles?.role as AppRole;
+                  
+                  // Security: Don't fallback to default role - throw error if role is invalid
+                  if (!primaryRole) {
+                    console.error('User has no role assigned');
+                    setUser(null);
+                    setApprovalStatus(null);
+                    return;
+                  }
+
                   const roleMap: Record<AppRole, User['role']> = {
                     'super_admin': 'Admin',
                     'admin': 'Admin',
@@ -51,11 +60,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                     'support': 'Support',
                   };
                   
+                  const mappedRole = roleMap[primaryRole];
+                  if (!mappedRole) {
+                    console.error('Invalid role:', primaryRole);
+                    setUser(null);
+                    setApprovalStatus(null);
+                    return;
+                  }
+                  
                   const userData: User = {
                     id: profile.user_id,
                     name: profile.full_name,
                     email: profile.email,
-                    role: roleMap[primaryRole] || 'Student',
+                    role: mappedRole,
                     active: true,
                     createdAt: profile.created_at,
                     approvalStatus: status,
@@ -110,6 +127,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsLoading(true);
     
     try {
+      // Client-side password validation
+      if (password.length < 12) {
+        setIsLoading(false);
+        return { success: false, error: 'Password must be at least 12 characters' };
+      }
+      
+      if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])/.test(password)) {
+        setIsLoading(false);
+        return { success: false, error: 'Password must contain uppercase, lowercase, number, and special character' };
+      }
+
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -124,59 +152,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
       
       if (data.user) {
-        // Map AppRole to the old role enum for backward compatibility
-        const roleMap: Record<AppRole, Database['public']['Enums']['user_role']> = {
-          'super_admin': 'Admin',
-          'admin': 'Admin',
-          'staff': 'Faculty',
-          'student': 'Student',
-          'parent': 'Parent',
-          'support': 'Support',
-        };
-        
-        // Create profile record
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .insert({
-            user_id: data.user.id,
-            full_name: fullName,
-            email: email,
-            role: roleMap[role],
-            department: department,
-            approval_status: 'pending',
-            is_verified: false,
-          });
-          
-        if (profileError) {
+        // Use atomic database function for secure signup
+        const { data: result, error: dbError } = await supabase.rpc('create_user_with_approval', {
+          p_user_id: data.user.id,
+          p_full_name: fullName,
+          p_email: email,
+          p_role: role,
+          p_department: department
+        });
+
+        if (dbError) {
           setIsLoading(false);
-          return { success: false, error: 'Failed to create profile' };
+          return { success: false, error: 'Failed to create account' };
         }
 
-        // Create user role record
-        const { error: roleError } = await supabase
-          .from('user_roles')
-          .insert({
-            user_id: data.user.id,
-            role: role,
-          });
-
-        if (roleError) {
+        const dbResult = result as { success: boolean; error?: string };
+        if (!dbResult.success) {
           setIsLoading(false);
-          return { success: false, error: 'Failed to assign role' };
-        }
-
-        // Create approval request
-        const { error: approvalError } = await supabase
-          .from('approval_requests')
-          .insert({
-            user_id: data.user.id,
-            requested_role: role,
-            status: 'pending',
-          });
-
-        if (approvalError) {
-          setIsLoading(false);
-          return { success: false, error: 'Failed to create approval request' };
+          return { success: false, error: dbResult.error || 'Failed to create account' };
         }
       }
       

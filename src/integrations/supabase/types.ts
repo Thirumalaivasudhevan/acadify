@@ -424,7 +424,6 @@ export type Database = {
           organization_id: string | null
           phone: string | null
           profile_photo_url: string | null
-          role: Database["public"]["Enums"]["user_role"]
           updated_at: string
           user_id: string
         }
@@ -444,7 +443,6 @@ export type Database = {
           organization_id?: string | null
           phone?: string | null
           profile_photo_url?: string | null
-          role: Database["public"]["Enums"]["user_role"]
           updated_at?: string
           user_id: string
         }
@@ -464,7 +462,6 @@ export type Database = {
           organization_id?: string | null
           phone?: string | null
           profile_photo_url?: string | null
-          role?: Database["public"]["Enums"]["user_role"]
           updated_at?: string
           user_id?: string
         }
@@ -672,6 +669,16 @@ export type Database = {
       approve_user: {
         Args: { _approver_id: string; _request_id: string; _user_id: string }
         Returns: boolean
+      }
+      create_user_with_approval: {
+        Args: {
+          p_department?: string
+          p_email: string
+          p_full_name: string
+          p_role: Database["public"]["Enums"]["app_role"]
+          p_user_id: string
+        }
+        Returns: Json
       }
       get_quiz_questions_for_student: {
         Args: { dept_id: string; question_limit?: number }

@@ -10,7 +10,7 @@ export const loginSchema = z.object({
     .max(255, { message: "Email must be less than 255 characters" }),
   password: z
     .string()
-    .min(6, { message: "Password must be at least 6 characters" })
+    .min(1, { message: "Password is required" })
     .max(100, { message: "Password must be less than 100 characters" })
 });
 
@@ -23,10 +23,10 @@ export const signUpSchema = z.object({
     .max(255, { message: "Email must be less than 255 characters" }),
   password: z
     .string()
-    .min(6, { message: "Password must be at least 6 characters" })
+    .min(12, { message: "Password must be at least 12 characters" })
     .max(100, { message: "Password must be less than 100 characters" })
-    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, { 
-      message: "Password must contain at least one uppercase letter, one lowercase letter, and one number" 
+    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])/, { 
+      message: "Password must contain uppercase, lowercase, number, and special character (@$!%*?&#)" 
     }),
   fullName: z
     .string()
@@ -58,9 +58,9 @@ export const attendanceSchema = z.object({
 // Password change validation schema
 export const passwordValidation = z.object({
   password: z.string()
-    .min(8, { message: "Password must be at least 8 characters long" })
-    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, { 
-      message: "Password must contain at least one uppercase letter, one lowercase letter, and one number" 
+    .min(12, { message: "Password must be at least 12 characters long" })
+    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])/, { 
+      message: "Password must contain uppercase, lowercase, number, and special character (@$!%*?&#)" 
     }),
   confirmPassword: z.string()
 }).refine((data) => data.password === data.confirmPassword, {
