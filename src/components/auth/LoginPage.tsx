@@ -192,6 +192,88 @@ const LoginPage = () => {
             </Button>
           </form>
           
+          <div className="space-y-4">
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted-foreground">
+                  Demo Login
+                </span>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setEmail('admin@demo.com');
+                  setPassword('Admin@123456');
+                }}
+                className="text-xs"
+              >
+                Admin
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setEmail('staff@demo.com');
+                  setPassword('Staff@123456');
+                }}
+                className="text-xs"
+              >
+                Staff
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setEmail('student@demo.com');
+                  setPassword('Student@123456');
+                }}
+                className="text-xs"
+              >
+                Student
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setEmail('parent@demo.com');
+                  setPassword('Parent@123456');
+                }}
+                className="text-xs"
+              >
+                Parent
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setEmail('support@demo.com');
+                  setPassword('Support@123456');
+                }}
+                className="text-xs"
+              >
+                Support
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setEmail('superadmin@demo.com');
+                  setPassword('SuperAdmin@123456');
+                }}
+                className="text-xs"
+              >
+                Super Admin
+              </Button>
+            </div>
+          </div>
+
           <div className="text-center space-y-2">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
