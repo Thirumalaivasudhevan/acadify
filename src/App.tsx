@@ -40,6 +40,19 @@ import ProfilePage from "./pages/ProfilePage";
 const AppRoutes = () => {
   const { user, isLoading } = useAuth();
 
+  // ⚠️ TEMPORARY: Authentication disabled for preview
+  // TODO: Re-enable authentication by uncommenting the blocks below
+  const PREVIEW_MODE = true;
+  const mockUser = {
+    id: 'preview-user',
+    name: 'Preview User',
+    email: 'preview@demo.com',
+    role: 'Student' as const, // Change this to preview different roles: 'Admin', 'Faculty', 'Student', 'Parent', 'Support'
+    active: true,
+    createdAt: new Date().toISOString(),
+  };
+
+  /* UNCOMMENT TO RE-ENABLE AUTHENTICATION:
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-animated">
@@ -56,12 +69,18 @@ const AppRoutes = () => {
       </Routes>
     );
   }
+  */
+
+  const currentUser = PREVIEW_MODE ? mockUser : user;
 
   return (
     <DashboardLayout>
       <Routes>
+        {/* Login Route - Always available in preview mode */}
+        <Route path="/login" element={<LoginPage />} />
+
         {/* Admin Routes */}
-        {user.role === 'Admin' && (
+        {(PREVIEW_MODE || currentUser?.role === 'Admin') && (
           <>
             <Route path="/" element={<Navigate to="/admin/dashboard" />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
@@ -69,9 +88,8 @@ const AppRoutes = () => {
         )}
 
         {/* Faculty Routes */}
-        {user.role === 'Faculty' && (
+        {(PREVIEW_MODE || currentUser?.role === 'Faculty') && (
           <>
-            <Route path="/" element={<Navigate to="/faculty/timetable" />} />
             <Route path="/faculty/timetable" element={<MyTimetable />} />
             <Route path="/faculty/works" element={<AssignWorks />} />
             <Route path="/faculty/attendance" element={<AttendancePage />} />
@@ -81,9 +99,8 @@ const AppRoutes = () => {
         )}
 
         {/* Student Routes */}
-        {user.role === 'Student' && (
+        {(PREVIEW_MODE || currentUser?.role === 'Student') && (
           <>
-            <Route path="/" element={<Navigate to="/student/dashboard" />} />
             <Route path="/student/dashboard" element={<StudentDashboard />} />
             <Route path="/student/quiz" element={<QuizPage />} />
             <Route path="/student/news" element={<NewsPage />} />
@@ -97,17 +114,15 @@ const AppRoutes = () => {
         )}
 
         {/* Parent Routes */}
-        {user.role === 'Parent' && (
+        {(PREVIEW_MODE || currentUser?.role === 'Parent') && (
           <>
-            <Route path="/" element={<Navigate to="/parent/dashboard" />} />
             <Route path="/parent/dashboard" element={<ParentDashboard />} />
           </>
         )}
 
         {/* Support Routes */}
-        {user.role === 'Support' && (
+        {(PREVIEW_MODE || currentUser?.role === 'Support') && (
           <>
-            <Route path="/" element={<Navigate to="/support/dashboard" />} />
             <Route path="/support/dashboard" element={<SupportDashboard />} />
           </>
         )}
@@ -115,7 +130,7 @@ const AppRoutes = () => {
         {/* Shared Routes */}
         <Route path="/profile" element={<ProfilePage />} />
 
-        <Route path="*" element={<Navigate to="/" />} />
+        <Route path="*" element={<Navigate to="/student/dashboard" />} />
       </Routes>
     </DashboardLayout>
   );
