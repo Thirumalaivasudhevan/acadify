@@ -79,10 +79,21 @@ const AppRoutes = () => {
         {/* Login Route - Always available in preview mode */}
         <Route path="/login" element={<LoginPage />} />
 
+        {/* Root redirect based on current role */}
+        <Route path="/" element={
+          <Navigate to={
+            currentUser?.role === 'Admin' ? '/admin/dashboard' :
+            currentUser?.role === 'Faculty' ? '/faculty/timetable' :
+            currentUser?.role === 'Student' ? '/student/dashboard' :
+            currentUser?.role === 'Parent' ? '/parent/dashboard' :
+            currentUser?.role === 'Support' ? '/support/dashboard' :
+            '/student/dashboard'
+          } />
+        } />
+
         {/* Admin Routes */}
         {(PREVIEW_MODE || currentUser?.role === 'Admin') && (
           <>
-            <Route path="/" element={<Navigate to="/admin/dashboard" />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
           </>
         )}
