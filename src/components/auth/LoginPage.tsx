@@ -208,10 +208,17 @@ const LoginPage = () => {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => {
-                  setEmail('admin@demo.com');
-                  setPassword('Admin@123456');
+                onClick={async () => {
+                  const success = await login('admin@demo.com', 'Demo@123456');
+                  if (!success) {
+                    toast({
+                      title: "Login failed",
+                      description: "Demo account not available. Please contact administrator.",
+                      variant: "destructive"
+                    });
+                  }
                 }}
+                disabled={isLoading}
                 className="text-xs"
               >
                 Admin
@@ -219,10 +226,17 @@ const LoginPage = () => {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => {
-                  setEmail('staff@demo.com');
-                  setPassword('Staff@123456');
+                onClick={async () => {
+                  const success = await login('staff@demo.com', 'Demo@123456');
+                  if (!success) {
+                    toast({
+                      title: "Login failed",
+                      description: "Demo account not available. Please contact administrator.",
+                      variant: "destructive"
+                    });
+                  }
                 }}
+                disabled={isLoading}
                 className="text-xs"
               >
                 Staff
@@ -230,10 +244,17 @@ const LoginPage = () => {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => {
-                  setEmail('student@demo.com');
-                  setPassword('Student@123456');
+                onClick={async () => {
+                  const success = await login('student@demo.com', 'Demo@123456');
+                  if (!success) {
+                    toast({
+                      title: "Login failed",
+                      description: "Demo account not available. Please contact administrator.",
+                      variant: "destructive"
+                    });
+                  }
                 }}
+                disabled={isLoading}
                 className="text-xs"
               >
                 Student
@@ -241,10 +262,17 @@ const LoginPage = () => {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => {
-                  setEmail('parent@demo.com');
-                  setPassword('Parent@123456');
+                onClick={async () => {
+                  const success = await login('parent@demo.com', 'Demo@123456');
+                  if (!success) {
+                    toast({
+                      title: "Login failed",
+                      description: "Demo account not available. Please contact administrator.",
+                      variant: "destructive"
+                    });
+                  }
                 }}
+                disabled={isLoading}
                 className="text-xs"
               >
                 Parent
@@ -252,10 +280,17 @@ const LoginPage = () => {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => {
-                  setEmail('support@demo.com');
-                  setPassword('Support@123456');
+                onClick={async () => {
+                  const success = await login('support@demo.com', 'Demo@123456');
+                  if (!success) {
+                    toast({
+                      title: "Login failed",
+                      description: "Demo account not available. Please contact administrator.",
+                      variant: "destructive"
+                    });
+                  }
                 }}
+                disabled={isLoading}
                 className="text-xs"
               >
                 Support
@@ -263,10 +298,17 @@ const LoginPage = () => {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => {
-                  setEmail('superadmin@demo.com');
-                  setPassword('SuperAdmin@123456');
+                onClick={async () => {
+                  const success = await login('superadmin@demo.com', 'Demo@123456');
+                  if (!success) {
+                    toast({
+                      title: "Login failed",
+                      description: "Demo account not available. Please contact administrator.",
+                      variant: "destructive"
+                    });
+                  }
                 }}
+                disabled={isLoading}
                 className="text-xs"
               >
                 Super Admin
