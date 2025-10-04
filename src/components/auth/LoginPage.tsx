@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
@@ -8,6 +8,7 @@ import { useToast } from '../../hooks/use-toast';
 import { GraduationCap, Lock, Mail, Loader2, User, ArrowRight } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import type { AppRole } from '../../types/auth';
+import { supabase } from '@/integrations/supabase/client';
 import RoleSelection from './RoleSelection';
 import RegistrationForm, { RegistrationData } from './RegistrationForm';
 import OTPVerification from './OTPVerification';
@@ -21,6 +22,15 @@ const LoginPage = () => {
   const [password, setPassword] = useState('');
   const { login, signUp, isLoading, approvalStatus } = useAuth();
   const { toast } = useToast();
+
+  useEffect(() => {
+    (async () => {
+      const { error } = await supabase.functions.invoke('setup-demo-accounts');
+      if (error) {
+        console.error('Demo setup error', error);
+      }
+    })();
+  }, []);
 
   // If user is logged in but not approved, show verification pending
   if (approvalStatus === 'pending' || approvalStatus === 'rejected') {
