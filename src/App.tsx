@@ -40,19 +40,6 @@ import ProfilePage from "./pages/ProfilePage";
 const AppRoutes = () => {
   const { user, isLoading } = useAuth();
 
-  // ⚠️ TEMPORARY: Authentication disabled for preview
-  // TODO: Re-enable authentication by uncommenting the blocks below
-  const PREVIEW_MODE = true;
-  const mockUser = {
-    id: 'preview-user',
-    name: 'Preview User',
-    email: 'preview@demo.com',
-    role: 'Student' as const, // Change this to preview different roles: 'Admin', 'Faculty', 'Student', 'Parent', 'Support'
-    active: true,
-    createdAt: new Date().toISOString(),
-  };
-
-  /* UNCOMMENT TO RE-ENABLE AUTHENTICATION:
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-animated">
@@ -60,18 +47,6 @@ const AppRoutes = () => {
       </div>
     );
   }
-
-  if (!user) {
-    return (
-      <Routes>
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="*" element={<Navigate to="/login" />} />
-      </Routes>
-    );
-  }
-  */
-
-  const currentUser = PREVIEW_MODE ? mockUser : user;
 
   return (
     <Routes>
@@ -85,61 +60,41 @@ const AppRoutes = () => {
             {/* Root redirect based on current role */}
             <Route path="/" element={
               <Navigate to={
-                currentUser?.role === 'Admin' ? '/admin/dashboard' :
-                currentUser?.role === 'Faculty' ? '/faculty/timetable' :
-                currentUser?.role === 'Student' ? '/student/dashboard' :
-                currentUser?.role === 'Parent' ? '/parent/dashboard' :
-                currentUser?.role === 'Support' ? '/support/dashboard' :
+                user?.role === 'Admin' ? '/admin/dashboard' :
+                user?.role === 'Faculty' ? '/faculty/timetable' :
+                user?.role === 'Student' ? '/student/dashboard' :
+                user?.role === 'Parent' ? '/parent/dashboard' :
+                user?.role === 'Support' ? '/support/dashboard' :
                 '/student/dashboard'
               } />
             } />
 
             {/* Admin Routes */}
-            {(PREVIEW_MODE || currentUser?.role === 'Admin') && (
-              <>
-                <Route path="/admin/dashboard" element={<AdminDashboard />} />
-              </>
-            )}
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
 
             {/* Faculty Routes */}
-            {(PREVIEW_MODE || currentUser?.role === 'Faculty') && (
-              <>
-                <Route path="/faculty/timetable" element={<MyTimetable />} />
-                <Route path="/faculty/works" element={<AssignWorks />} />
-                <Route path="/faculty/attendance" element={<AttendancePage />} />
-                <Route path="/faculty/announcements" element={<FacultyAnnouncements />} />
-                <Route path="/faculty/requests" element={<FacultyRequests />} />
-              </>
-            )}
+            <Route path="/faculty/timetable" element={<MyTimetable />} />
+            <Route path="/faculty/works" element={<AssignWorks />} />
+            <Route path="/faculty/attendance" element={<AttendancePage />} />
+            <Route path="/faculty/announcements" element={<FacultyAnnouncements />} />
+            <Route path="/faculty/requests" element={<FacultyRequests />} />
 
             {/* Student Routes */}
-            {(PREVIEW_MODE || currentUser?.role === 'Student') && (
-              <>
-                <Route path="/student/dashboard" element={<StudentDashboard />} />
-                <Route path="/student/quiz" element={<QuizPage />} />
-                <Route path="/student/news" element={<NewsPage />} />
-                <Route path="/student/ai-chat" element={<AIChatPage />} />
-                <Route path="/student/timetable" element={<StudentTimetable />} />
-                <Route path="/student/works" element={<MyWorks />} />
-                <Route path="/student/attendance" element={<MyAttendance />} />
-                <Route path="/student/announcements" element={<StudentAnnouncements />} />
-                <Route path="/student/requests" element={<StudentRequests />} />
-              </>
-            )}
+            <Route path="/student/dashboard" element={<StudentDashboard />} />
+            <Route path="/student/quiz" element={<QuizPage />} />
+            <Route path="/student/news" element={<NewsPage />} />
+            <Route path="/student/ai-chat" element={<AIChatPage />} />
+            <Route path="/student/timetable" element={<StudentTimetable />} />
+            <Route path="/student/works" element={<MyWorks />} />
+            <Route path="/student/attendance" element={<MyAttendance />} />
+            <Route path="/student/announcements" element={<StudentAnnouncements />} />
+            <Route path="/student/requests" element={<StudentRequests />} />
 
             {/* Parent Routes */}
-            {(PREVIEW_MODE || currentUser?.role === 'Parent') && (
-              <>
-                <Route path="/parent/dashboard" element={<ParentDashboard />} />
-              </>
-            )}
+            <Route path="/parent/dashboard" element={<ParentDashboard />} />
 
             {/* Support Routes */}
-            {(PREVIEW_MODE || currentUser?.role === 'Support') && (
-              <>
-                <Route path="/support/dashboard" element={<SupportDashboard />} />
-              </>
-            )}
+            <Route path="/support/dashboard" element={<SupportDashboard />} />
 
             {/* Shared Routes */}
             <Route path="/profile" element={<ProfilePage />} />

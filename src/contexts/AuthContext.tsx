@@ -6,13 +6,30 @@ import type { Database } from '../integrations/supabase/types';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// ⚠️ TEMPORARY: Preview mode for testing all pages without authentication
+const PREVIEW_MODE = true;
+const mockUser: User = {
+  id: 'preview-user',
+  name: 'Preview User',
+  email: 'preview@demo.com',
+  role: 'Student', // Change to preview different roles: 'Admin', 'Faculty', 'Student', 'Parent', 'Support'
+  active: true,
+  createdAt: new Date().toISOString(),
+};
+
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(PREVIEW_MODE ? mockUser : null);
   const [session, setSession] = useState<Session | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(!PREVIEW_MODE);
   const [approvalStatus, setApprovalStatus] = useState<'pending' | 'approved' | 'rejected' | null>(null);
 
   useEffect(() => {
+    // Skip auth setup in preview mode
+    if (PREVIEW_MODE) {
+      setIsLoading(false);
+      return;
+    }
+
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
