@@ -1,5 +1,5 @@
-export type AppRole = 'super_admin' | 'admin' | 'staff' | 'student' | 'parent' | 'support';
-export type UserRole = 'Faculty' | 'Student' | 'Admin' | 'Parent' | 'Support';
+export type AppRole = 'master_owner' | 'super_admin' | 'admin' | 'staff' | 'student' | 'parent' | 'support';
+export type UserRole = 'MasterOwner' | 'SuperAdmin' | 'Faculty' | 'Student' | 'Admin' | 'Parent' | 'Support';
 
 export interface User {
   id: string;

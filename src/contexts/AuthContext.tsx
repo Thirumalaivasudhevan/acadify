@@ -69,7 +69,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                   }
 
                   const roleMap: Record<AppRole, User['role']> = {
-                    'super_admin': 'Admin',
+                    'master_owner': 'MasterOwner',
+                    'super_admin': 'SuperAdmin',
                     'admin': 'Admin',
                     'staff': 'Faculty',
                     'student': 'Student',
@@ -174,7 +175,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           p_user_id: data.user.id,
           p_full_name: fullName,
           p_email: email,
-          p_role: role,
+          p_role: role as any, // Type will be updated after migration
           p_department: department
         });
 

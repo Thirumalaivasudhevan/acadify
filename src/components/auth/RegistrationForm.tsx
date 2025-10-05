@@ -35,6 +35,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ role, onBack, onSub
   const { toast } = useToast();
 
   const roleNames: Record<AppRole, string> = {
+    master_owner: 'Master Owner',
     super_admin: 'Super Admin',
     admin: 'Admin',
     staff: 'Faculty/Staff',
