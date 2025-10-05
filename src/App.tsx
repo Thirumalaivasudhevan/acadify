@@ -74,76 +74,81 @@ const AppRoutes = () => {
   const currentUser = PREVIEW_MODE ? mockUser : user;
 
   return (
-    <DashboardLayout>
-      <Routes>
-        {/* Login Route - Always available in preview mode */}
-        <Route path="/login" element={<LoginPage />} />
+    <Routes>
+      {/* Login Route - Always available, not wrapped in DashboardLayout */}
+      <Route path="/login" element={<LoginPage />} />
 
-        {/* Root redirect based on current role */}
-        <Route path="/" element={
-          <Navigate to={
-            currentUser?.role === 'Admin' ? '/admin/dashboard' :
-            currentUser?.role === 'Faculty' ? '/faculty/timetable' :
-            currentUser?.role === 'Student' ? '/student/dashboard' :
-            currentUser?.role === 'Parent' ? '/parent/dashboard' :
-            currentUser?.role === 'Support' ? '/support/dashboard' :
-            '/student/dashboard'
-          } />
-        } />
+      {/* All other routes wrapped in DashboardLayout */}
+      <Route path="*" element={
+        <DashboardLayout>
+          <Routes>
+            {/* Root redirect based on current role */}
+            <Route path="/" element={
+              <Navigate to={
+                currentUser?.role === 'Admin' ? '/admin/dashboard' :
+                currentUser?.role === 'Faculty' ? '/faculty/timetable' :
+                currentUser?.role === 'Student' ? '/student/dashboard' :
+                currentUser?.role === 'Parent' ? '/parent/dashboard' :
+                currentUser?.role === 'Support' ? '/support/dashboard' :
+                '/student/dashboard'
+              } />
+            } />
 
-        {/* Admin Routes */}
-        {(PREVIEW_MODE || currentUser?.role === 'Admin') && (
-          <>
-            <Route path="/admin/dashboard" element={<AdminDashboard />} />
-          </>
-        )}
+            {/* Admin Routes */}
+            {(PREVIEW_MODE || currentUser?.role === 'Admin') && (
+              <>
+                <Route path="/admin/dashboard" element={<AdminDashboard />} />
+              </>
+            )}
 
-        {/* Faculty Routes */}
-        {(PREVIEW_MODE || currentUser?.role === 'Faculty') && (
-          <>
-            <Route path="/faculty/timetable" element={<MyTimetable />} />
-            <Route path="/faculty/works" element={<AssignWorks />} />
-            <Route path="/faculty/attendance" element={<AttendancePage />} />
-            <Route path="/faculty/announcements" element={<FacultyAnnouncements />} />
-            <Route path="/faculty/requests" element={<FacultyRequests />} />
-          </>
-        )}
+            {/* Faculty Routes */}
+            {(PREVIEW_MODE || currentUser?.role === 'Faculty') && (
+              <>
+                <Route path="/faculty/timetable" element={<MyTimetable />} />
+                <Route path="/faculty/works" element={<AssignWorks />} />
+                <Route path="/faculty/attendance" element={<AttendancePage />} />
+                <Route path="/faculty/announcements" element={<FacultyAnnouncements />} />
+                <Route path="/faculty/requests" element={<FacultyRequests />} />
+              </>
+            )}
 
-        {/* Student Routes */}
-        {(PREVIEW_MODE || currentUser?.role === 'Student') && (
-          <>
-            <Route path="/student/dashboard" element={<StudentDashboard />} />
-            <Route path="/student/quiz" element={<QuizPage />} />
-            <Route path="/student/news" element={<NewsPage />} />
-            <Route path="/student/ai-chat" element={<AIChatPage />} />
-            <Route path="/student/timetable" element={<StudentTimetable />} />
-            <Route path="/student/works" element={<MyWorks />} />
-            <Route path="/student/attendance" element={<MyAttendance />} />
-            <Route path="/student/announcements" element={<StudentAnnouncements />} />
-            <Route path="/student/requests" element={<StudentRequests />} />
-          </>
-        )}
+            {/* Student Routes */}
+            {(PREVIEW_MODE || currentUser?.role === 'Student') && (
+              <>
+                <Route path="/student/dashboard" element={<StudentDashboard />} />
+                <Route path="/student/quiz" element={<QuizPage />} />
+                <Route path="/student/news" element={<NewsPage />} />
+                <Route path="/student/ai-chat" element={<AIChatPage />} />
+                <Route path="/student/timetable" element={<StudentTimetable />} />
+                <Route path="/student/works" element={<MyWorks />} />
+                <Route path="/student/attendance" element={<MyAttendance />} />
+                <Route path="/student/announcements" element={<StudentAnnouncements />} />
+                <Route path="/student/requests" element={<StudentRequests />} />
+              </>
+            )}
 
-        {/* Parent Routes */}
-        {(PREVIEW_MODE || currentUser?.role === 'Parent') && (
-          <>
-            <Route path="/parent/dashboard" element={<ParentDashboard />} />
-          </>
-        )}
+            {/* Parent Routes */}
+            {(PREVIEW_MODE || currentUser?.role === 'Parent') && (
+              <>
+                <Route path="/parent/dashboard" element={<ParentDashboard />} />
+              </>
+            )}
 
-        {/* Support Routes */}
-        {(PREVIEW_MODE || currentUser?.role === 'Support') && (
-          <>
-            <Route path="/support/dashboard" element={<SupportDashboard />} />
-          </>
-        )}
+            {/* Support Routes */}
+            {(PREVIEW_MODE || currentUser?.role === 'Support') && (
+              <>
+                <Route path="/support/dashboard" element={<SupportDashboard />} />
+              </>
+            )}
 
-        {/* Shared Routes */}
-        <Route path="/profile" element={<ProfilePage />} />
+            {/* Shared Routes */}
+            <Route path="/profile" element={<ProfilePage />} />
 
-        <Route path="*" element={<Navigate to="/student/dashboard" />} />
-      </Routes>
-    </DashboardLayout>
+            <Route path="*" element={<Navigate to="/student/dashboard" />} />
+          </Routes>
+        </DashboardLayout>
+      } />
+    </Routes>
   );
 };
 
