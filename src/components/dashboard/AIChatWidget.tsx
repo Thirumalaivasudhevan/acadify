@@ -27,7 +27,7 @@ const AIChatWidget: React.FC = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: '1',
-      content: "Hello! I'm your educational AI assistant. I can help you with academic questions, study tips, homework explanations, and learning strategies. What would you like to know?",
+      content: "Hello! I'm Acadify, your educational AI assistant. I can help you with academic questions, study tips, homework explanations, and learning strategies. What would you like to know?",
       sender: 'ai',
       timestamp: new Date()
     }
@@ -156,8 +156,8 @@ const AIChatWidget: React.FC = () => {
         <div className="flex items-center space-x-2">
           <MessageCircle className="h-5 w-5 text-primary" />
           <div>
-            <CardTitle className="text-lg">AI Assistant</CardTitle>
-            <CardDescription>Get help with your studies</CardDescription>
+            <CardTitle className="text-lg">Acadify</CardTitle>
+            <CardDescription>Your AI learning companion</CardDescription>
           </div>
         </div>
         <Badge variant="outline" className="ml-auto text-xs">

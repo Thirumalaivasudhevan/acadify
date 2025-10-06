@@ -10,8 +10,8 @@ const AIChatPage: React.FC = () => {
           <Bot className="h-8 w-8 text-primary" />
         </div>
         <div>
-          <h1 className="text-3xl font-bold">AI Assistant</h1>
-          <p className="text-muted-foreground">Get instant help with your academic queries</p>
+          <h1 className="text-3xl font-bold">Acadify</h1>
+          <p className="text-muted-foreground">Your AI learning companion</p>
         </div>
       </div>
 
