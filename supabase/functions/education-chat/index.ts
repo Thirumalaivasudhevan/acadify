@@ -9,7 +9,7 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { messages } = await req.json();
+    const { messages, hasImage } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY not configured");
 
@@ -24,7 +24,7 @@ serve(async (req) => {
         messages: [
           { 
             role: "system", 
-            content: "You are an educational AI assistant for students. Help them with academic questions, study tips, homework explanations, and learning strategies. Keep answers clear, educational, and encouraging. If asked about non-educational topics, politely redirect to academic subjects."
+            content: "You are an educational AI assistant for students. Help them with academic questions, study tips, homework explanations, and learning strategies. When students share images, analyze them in an educational context - help with diagrams, math problems, text from books, etc. Keep answers clear, educational, and encouraging. If asked about non-educational topics, politely redirect to academic subjects."
           },
           ...messages,
         ],

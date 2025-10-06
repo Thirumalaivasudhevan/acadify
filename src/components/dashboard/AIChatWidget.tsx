@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { ScrollArea } from '../ui/scroll-area';
-import { MessageCircle, Send, Bot, User } from 'lucide-react';
+import { MessageCircle, Send, Bot, User, Image as ImageIcon, Paperclip, X } from 'lucide-react';
 import { Badge } from '../ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -13,6 +13,12 @@ interface ChatMessage {
   content: string;
   sender: 'user' | 'ai';
   timestamp: Date;
+  image?: string;
+  document?: {
+    name: string;
+    type: string;
+    url: string;
+  };
 }
 
 const AIChatWidget: React.FC = () => {
@@ -28,6 +34,10 @@ const AIChatWidget: React.FC = () => {
   ]);
   const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [selectedDocument, setSelectedDocument] = useState<File | null>(null);
+  const imageInputRef = useRef<HTMLInputElement>(null);
+  const documentInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -35,29 +45,69 @@ const AIChatWidget: React.FC = () => {
     }
   }, [messages, isTyping]);
 
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setSelectedImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleDocumentSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedDocument(file);
+    }
+  };
+
   const handleSendMessage = async () => {
-    if (!inputMessage.trim()) return;
+    if (!inputMessage.trim() && !selectedImage && !selectedDocument) return;
 
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
       content: inputMessage,
       sender: 'user',
-      timestamp: new Date()
+      timestamp: new Date(),
+      image: selectedImage || undefined,
+      document: selectedDocument ? {
+        name: selectedDocument.name,
+        type: selectedDocument.type,
+        url: URL.createObjectURL(selectedDocument)
+      } : undefined
     };
 
-    const currentInput = inputMessage;
     setMessages(prev => [...prev, userMessage]);
     setInputMessage('');
+    const currentImage = selectedImage;
+    setSelectedImage(null);
+    setSelectedDocument(null);
     setIsTyping(true);
 
     try {
-      const conversationHistory = [...messages, userMessage].map(msg => ({
-        role: msg.sender === 'user' ? 'user' : 'assistant',
-        content: msg.content
-      }));
+      const conversationHistory = [...messages, userMessage].map(msg => {
+        if (msg.image) {
+          return {
+            role: msg.sender === 'user' ? 'user' : 'assistant',
+            content: [
+              { type: 'text', text: msg.content || 'What can you tell me about this image?' },
+              { type: 'image_url', image_url: { url: msg.image } }
+            ]
+          };
+        }
+        return {
+          role: msg.sender === 'user' ? 'user' : 'assistant',
+          content: msg.content
+        };
+      });
 
       const { data, error } = await supabase.functions.invoke('education-chat', {
-        body: { messages: conversationHistory }
+        body: { 
+          messages: conversationHistory,
+          hasImage: !!currentImage
+        }
       });
 
       if (error) throw error;
@@ -141,7 +191,20 @@ const AIChatWidget: React.FC = () => {
                       : 'bg-muted'
                   }`}
                 >
-                  <div className="break-words">{message.content}</div>
+                  {message.image && (
+                    <img 
+                      src={message.image} 
+                      alt="Uploaded" 
+                      className="rounded-md mb-2 max-w-full h-auto max-h-48 object-cover"
+                    />
+                  )}
+                  {message.document && (
+                    <div className="flex items-center space-x-2 mb-2 p-2 bg-background/20 rounded">
+                      <Paperclip className="h-4 w-4" />
+                      <span className="text-xs truncate">{message.document.name}</span>
+                    </div>
+                  )}
+                  {message.content && <div className="break-words">{message.content}</div>}
                   <div
                     className={`text-xs mt-1 opacity-70 ${
                       message.sender === 'user' ? 'text-primary-foreground' : 'text-muted-foreground'
@@ -176,8 +239,73 @@ const AIChatWidget: React.FC = () => {
           </div>
         </ScrollArea>
 
+        {/* File Previews */}
+        {(selectedImage || selectedDocument) && (
+          <div className="flex items-center space-x-2 p-2 bg-muted rounded-lg shrink-0">
+            {selectedImage && (
+              <div className="relative">
+                <img src={selectedImage} alt="Preview" className="h-16 w-16 object-cover rounded" />
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  className="absolute -top-2 -right-2 h-5 w-5 p-0 rounded-full"
+                  onClick={() => setSelectedImage(null)}
+                >
+                  <X className="h-3 w-3" />
+                </Button>
+              </div>
+            )}
+            {selectedDocument && (
+              <div className="relative flex items-center space-x-2 bg-background p-2 rounded">
+                <Paperclip className="h-4 w-4" />
+                <span className="text-xs">{selectedDocument.name}</span>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="h-5 w-5 p-0"
+                  onClick={() => setSelectedDocument(null)}
+                >
+                  <X className="h-3 w-3" />
+                </Button>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Input Area */}
         <div className="flex space-x-2 shrink-0">
+          <input
+            ref={imageInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleImageSelect}
+          />
+          <input
+            ref={documentInputRef}
+            type="file"
+            accept=".pdf,.doc,.docx,.txt"
+            className="hidden"
+            onChange={handleDocumentSelect}
+          />
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => imageInputRef.current?.click()}
+            disabled={isTyping}
+            className="px-3"
+          >
+            <ImageIcon className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => documentInputRef.current?.click()}
+            disabled={isTyping}
+            className="px-3"
+          >
+            <Paperclip className="h-4 w-4" />
+          </Button>
           <Input
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
@@ -188,7 +316,7 @@ const AIChatWidget: React.FC = () => {
           />
           <Button
             onClick={handleSendMessage}
-            disabled={!inputMessage.trim() || isTyping}
+            disabled={(!inputMessage.trim() && !selectedImage && !selectedDocument) || isTyping}
             size="sm"
             className="px-3"
           >
