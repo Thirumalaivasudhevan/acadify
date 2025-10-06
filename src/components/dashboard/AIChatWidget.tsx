@@ -23,7 +23,7 @@ interface ChatMessage {
 
 const AIChatWidget: React.FC = () => {
   const { toast } = useToast();
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: '1',
@@ -40,9 +40,7 @@ const AIChatWidget: React.FC = () => {
   const documentInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isTyping]);
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -170,7 +168,7 @@ const AIChatWidget: React.FC = () => {
       <CardContent className="flex flex-col flex-1 p-4 space-y-4">
         {/* Chat Messages */}
         <ScrollArea className="flex-1 pr-2">
-          <div className="space-y-4" ref={scrollRef}>
+          <div className="space-y-4">
             {messages.map((message) => (
               <div
                 key={message.id}
@@ -204,7 +202,21 @@ const AIChatWidget: React.FC = () => {
                       <span className="text-xs truncate">{message.document.name}</span>
                     </div>
                   )}
-                  {message.content && <div className="break-words">{message.content}</div>}
+                  {message.content && (
+                    <div 
+                      className="break-words prose prose-sm max-w-none dark:prose-invert prose-headings:font-semibold prose-p:my-2 prose-ul:my-2 prose-strong:font-bold"
+                      dangerouslySetInnerHTML={{ 
+                        __html: message.content
+                          .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                          .replace(/###\s+(.*?)(?=\n|$)/g, '<h3 class="text-base font-semibold mt-3 mb-2">$1</h3>')
+                          .replace(/##\s+(.*?)(?=\n|$)/g, '<h2 class="text-lg font-semibold mt-4 mb-2">$1</h2>')
+                          .replace(/\n\n/g, '</p><p class="my-2">')
+                          .replace(/^\s*[-*]\s+(.+)$/gm, '<li>$1</li>')
+                          .replace(/(<li>.*<\/li>)/s, '<ul class="list-disc pl-4 my-2">$1</ul>')
+                          .replace(/^(?!<[h|p|u])(.+)$/gm, '<p class="my-2">$1</p>')
+                      }}
+                    />
+                  )}
                   <div
                     className={`text-xs mt-1 opacity-70 ${
                       message.sender === 'user' ? 'text-primary-foreground' : 'text-muted-foreground'
@@ -236,6 +248,7 @@ const AIChatWidget: React.FC = () => {
                 </div>
               </div>
             )}
+            <div ref={messagesEndRef} />
           </div>
         </ScrollArea>
 
