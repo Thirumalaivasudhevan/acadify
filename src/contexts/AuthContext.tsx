@@ -6,30 +6,16 @@ import type { Database } from '../integrations/supabase/types';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// ⚠️ TEMPORARY: Preview mode for testing all pages without authentication
-const PREVIEW_MODE = true;
-const mockUser: User = {
-  id: 'preview-user',
-  name: 'Preview User',
-  email: 'preview@demo.com',
-  role: 'Student', // Change to preview different roles: 'Admin', 'Faculty', 'Student', 'Parent', 'Support'
-  active: true,
-  createdAt: new Date().toISOString(),
-};
+// Preview mode disabled for security
+const PREVIEW_MODE = false;
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(PREVIEW_MODE ? mockUser : null);
+  const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
-  const [isLoading, setIsLoading] = useState(!PREVIEW_MODE);
+  const [isLoading, setIsLoading] = useState(true);
   const [approvalStatus, setApprovalStatus] = useState<'pending' | 'approved' | 'rejected' | null>(null);
 
   useEffect(() => {
-    // Skip auth setup in preview mode
-    if (PREVIEW_MODE) {
-      setIsLoading(false);
-      return;
-    }
-
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
@@ -145,15 +131,32 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsLoading(true);
     
     try {
-      // Client-side password validation
-      if (password.length < 12) {
+      // Enhanced password validation
+      if (password.length < 14) {
         setIsLoading(false);
-        return { success: false, error: 'Password must be at least 12 characters' };
+        return { success: false, error: 'Password must be at least 14 characters' };
       }
       
-      if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])/.test(password)) {
+      if (password.length > 128) {
+        setIsLoading(false);
+        return { success: false, error: 'Password must not exceed 128 characters' };
+      }
+      
+      if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#^()_+\-=\[\]{};:,.<>])/.test(password)) {
         setIsLoading(false);
         return { success: false, error: 'Password must contain uppercase, lowercase, number, and special character' };
+      }
+      
+      // Block common weak patterns
+      const weakPatterns = [
+        /^(.)\1+$/i, // All same character
+        /^(012|123|234|345|456|567|678|789|890)+/i, // Sequential numbers
+        /^(abc|bcd|cde|def|efg|fgh|ghi|hij|ijk|jkl|klm|lmn|mno|nop|opq|pqr|qrs|rst|stu|tuv|uvw|vwx|wxy|xyz)+/i, // Sequential letters
+      ];
+      
+      if (weakPatterns.some(pattern => pattern.test(password))) {
+        setIsLoading(false);
+        return { success: false, error: 'Password contains weak patterns. Please choose a stronger password.' };
       }
 
       const { data, error } = await supabase.auth.signUp({
@@ -172,13 +175,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (data.user) {
         let organizationId: string | null = null;
 
+        // Validate institution code format
+        if (!/^[a-zA-Z0-9]{4,10}$/.test(institutionCode)) {
+          setIsLoading(false);
+          return { success: false, error: 'Institution code must be 4-10 alphanumeric characters' };
+        }
+
         // Handle institution code
         if (role === 'super_admin') {
           // SuperAdmin creates a new institution
           const { data: existingOrg } = await supabase
             .from('organizations')
             .select('id')
-            .eq('institution_code', institutionCode)
+            .ilike('institution_code', institutionCode)
             .single();
 
           if (existingOrg) {
