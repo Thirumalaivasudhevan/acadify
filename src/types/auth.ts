@@ -18,7 +18,7 @@ export interface User {
 export interface AuthContextType {
   user: User | null;
   login: (email: string, password: string) => Promise<boolean>;
-  signUp: (email: string, password: string, fullName: string, role: AppRole, department?: string) => Promise<{ success: boolean; error?: string }>;
+  signUp: (email: string, password: string, fullName: string, role: AppRole, institutionCode: string, department?: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => void;
   isLoading: boolean;
   approvalStatus: 'pending' | 'approved' | 'rejected' | null;

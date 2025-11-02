@@ -5,10 +5,8 @@ import { Input } from '../ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Label } from '../ui/label';
 import { useToast } from '../../hooks/use-toast';
-import { GraduationCap, Lock, Mail, Loader2, User, ArrowRight } from 'lucide-react';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { GraduationCap, Lock, Mail, Loader2, ArrowRight } from 'lucide-react';
 import type { AppRole } from '../../types/auth';
-import { supabase } from '@/integrations/supabase/client';
 import RoleSelection from './RoleSelection';
 import RegistrationForm, { RegistrationData } from './RegistrationForm';
 import OTPVerification from './OTPVerification';
@@ -23,14 +21,6 @@ const LoginPage = () => {
   const { login, signUp, isLoading, approvalStatus } = useAuth();
   const { toast } = useToast();
 
-  useEffect(() => {
-    (async () => {
-      const { error } = await supabase.functions.invoke('setup-demo-accounts');
-      if (error) {
-        console.error('Demo setup error', error);
-      }
-    })();
-  }, []);
 
   // If user is logged in but not approved, show verification pending
   if (approvalStatus === 'pending' || approvalStatus === 'rejected') {
@@ -61,6 +51,7 @@ const LoginPage = () => {
       data.password,
       data.fullName,
       selectedRole!,
+      data.institutionCode,
       data.department
     );
     
@@ -202,130 +193,6 @@ const LoginPage = () => {
             </Button>
           </form>
           
-          <div className="space-y-4">
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-background px-2 text-muted-foreground">
-                  Demo Login
-                </span>
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-2 gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={async () => {
-                  const success = await login('admin@demo.com', 'Demo@123456');
-                  if (!success) {
-                    toast({
-                      title: "Login failed",
-                      description: "Demo account not available. Please contact administrator.",
-                      variant: "destructive"
-                    });
-                  }
-                }}
-                disabled={isLoading}
-                className="text-xs"
-              >
-                Admin
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={async () => {
-                  const success = await login('staff@demo.com', 'Demo@123456');
-                  if (!success) {
-                    toast({
-                      title: "Login failed",
-                      description: "Demo account not available. Please contact administrator.",
-                      variant: "destructive"
-                    });
-                  }
-                }}
-                disabled={isLoading}
-                className="text-xs"
-              >
-                Staff
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={async () => {
-                  const success = await login('student@demo.com', 'Demo@123456');
-                  if (!success) {
-                    toast({
-                      title: "Login failed",
-                      description: "Demo account not available. Please contact administrator.",
-                      variant: "destructive"
-                    });
-                  }
-                }}
-                disabled={isLoading}
-                className="text-xs"
-              >
-                Student
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={async () => {
-                  const success = await login('parent@demo.com', 'Demo@123456');
-                  if (!success) {
-                    toast({
-                      title: "Login failed",
-                      description: "Demo account not available. Please contact administrator.",
-                      variant: "destructive"
-                    });
-                  }
-                }}
-                disabled={isLoading}
-                className="text-xs"
-              >
-                Parent
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={async () => {
-                  const success = await login('support@demo.com', 'Demo@123456');
-                  if (!success) {
-                    toast({
-                      title: "Login failed",
-                      description: "Demo account not available. Please contact administrator.",
-                      variant: "destructive"
-                    });
-                  }
-                }}
-                disabled={isLoading}
-                className="text-xs"
-              >
-                Support
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={async () => {
-                  const success = await login('superadmin@demo.com', 'Demo@123456');
-                  if (!success) {
-                    toast({
-                      title: "Login failed",
-                      description: "Demo account not available. Please contact administrator.",
-                      variant: "destructive"
-                    });
-                  }
-                }}
-                disabled={isLoading}
-                className="text-xs"
-              >
-                Super Admin
-              </Button>
-            </div>
-          </div>
-
           <div className="text-center space-y-2">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">

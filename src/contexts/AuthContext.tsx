@@ -141,7 +141,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return true;
   };
 
-  const signUp = async (email: string, password: string, fullName: string, role: AppRole, department?: string): Promise<{ success: boolean; error?: string }> => {
+  const signUp = async (email: string, password: string, fullName: string, role: AppRole, institutionCode: string, department?: string): Promise<{ success: boolean; error?: string }> => {
     setIsLoading(true);
     
     try {
@@ -170,12 +170,60 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
       
       if (data.user) {
+        let organizationId: string | null = null;
+
+        // Handle institution code
+        if (role === 'super_admin') {
+          // SuperAdmin creates a new institution
+          const { data: existingOrg } = await supabase
+            .from('organizations')
+            .select('id')
+            .eq('institution_code', institutionCode)
+            .single();
+
+          if (existingOrg) {
+            setIsLoading(false);
+            return { success: false, error: 'Institution code already exists. Please choose a different code.' };
+          }
+
+          const { data: newOrg, error: orgError } = await supabase
+            .from('organizations')
+            .insert({
+              name: fullName + "'s Institution",
+              email: email,
+              institution_code: institutionCode,
+            })
+            .select('id')
+            .single();
+
+          if (orgError || !newOrg) {
+            setIsLoading(false);
+            return { success: false, error: 'Failed to create institution' };
+          }
+
+          organizationId = newOrg.id;
+        } else {
+          // Other roles must use existing institution code
+          const { data: org, error: orgError } = await supabase
+            .from('organizations')
+            .select('id')
+            .eq('institution_code', institutionCode)
+            .single();
+
+          if (orgError || !org) {
+            setIsLoading(false);
+            return { success: false, error: 'Invalid institution code. Please check with your institution.' };
+          }
+
+          organizationId = org.id;
+        }
+
         // Use atomic database function for secure signup
         const { data: result, error: dbError } = await supabase.rpc('create_user_with_approval', {
           p_user_id: data.user.id,
           p_full_name: fullName,
           p_email: email,
-          p_role: role as any, // Type will be updated after migration
+          p_role: role as any,
           p_department: department
         });
 
@@ -188,6 +236,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (!dbResult.success) {
           setIsLoading(false);
           return { success: false, error: dbResult.error || 'Failed to create account' };
+        }
+
+        // Update profile with organization_id
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .update({ organization_id: organizationId })
+          .eq('user_id', data.user.id);
+
+        if (profileError) {
+          setIsLoading(false);
+          return { success: false, error: 'Failed to link to institution' };
         }
       }
       

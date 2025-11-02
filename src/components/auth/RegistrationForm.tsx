@@ -18,6 +18,7 @@ export interface RegistrationData {
   email: string;
   password: string;
   confirmPassword: string;
+  institutionCode: string;
   department?: string;
   rollNumber?: string;
 }
@@ -28,6 +29,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ role, onBack, onSub
     email: '',
     password: '',
     confirmPassword: '',
+    institutionCode: '',
     department: '',
     rollNumber: '',
   });
@@ -137,6 +139,27 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ role, onBack, onSub
                   required
                 />
               </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="institutionCode">College/Institution Code</Label>
+              <div className="relative">
+                <Building className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="institutionCode"
+                  type="text"
+                  placeholder="Enter college code (e.g., bru4j)"
+                  value={formData.institutionCode}
+                  onChange={(e) => setFormData({ ...formData, institutionCode: e.target.value.toLowerCase() })}
+                  className="pl-10 glass"
+                  required
+                />
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {role === 'super_admin' 
+                  ? 'Create a unique code for your institution'
+                  : 'Enter the code provided by your institution'}
+              </p>
             </div>
 
             {needsDepartment && (
