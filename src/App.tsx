@@ -50,59 +50,65 @@ const AppRoutes = () => {
 
   return (
     <Routes>
-      {/* Login Route - Always available, not wrapped in DashboardLayout */}
-      <Route path="/login" element={<LoginPage />} />
-
-      {/* All other routes wrapped in DashboardLayout */}
-      <Route path="*" element={
-        <DashboardLayout>
-          <Routes>
-            {/* Root redirect based on current role */}
-            <Route path="/" element={
-              <Navigate to={
-                user?.role === 'Admin' ? '/admin/dashboard' :
-                user?.role === 'Faculty' ? '/faculty/timetable' :
-                user?.role === 'Student' ? '/student/dashboard' :
-                user?.role === 'Parent' ? '/parent/dashboard' :
-                user?.role === 'Support' ? '/support/dashboard' :
-                '/student/dashboard'
-              } />
-            } />
-
-            {/* Admin Routes */}
-            <Route path="/admin/dashboard" element={<AdminDashboard />} />
-
-            {/* Faculty Routes */}
-            <Route path="/faculty/timetable" element={<MyTimetable />} />
-            <Route path="/faculty/works" element={<AssignWorks />} />
-            <Route path="/faculty/attendance" element={<AttendancePage />} />
-            <Route path="/faculty/announcements" element={<FacultyAnnouncements />} />
-            <Route path="/faculty/requests" element={<FacultyRequests />} />
-
-            {/* Student Routes */}
-            <Route path="/student/dashboard" element={<StudentDashboard />} />
-            <Route path="/student/quiz" element={<QuizPage />} />
-            <Route path="/student/news" element={<NewsPage />} />
-            <Route path="/student/ai-chat" element={<AIChatPage />} />
-            <Route path="/student/timetable" element={<StudentTimetable />} />
-            <Route path="/student/works" element={<MyWorks />} />
-            <Route path="/student/attendance" element={<MyAttendance />} />
-            <Route path="/student/announcements" element={<StudentAnnouncements />} />
-            <Route path="/student/requests" element={<StudentRequests />} />
-
-            {/* Parent Routes */}
-            <Route path="/parent/dashboard" element={<ParentDashboard />} />
-
-            {/* Support Routes */}
-            <Route path="/support/dashboard" element={<SupportDashboard />} />
-
-            {/* Shared Routes */}
-            <Route path="/profile" element={<ProfilePage />} />
-
-            <Route path="*" element={<Navigate to="/student/dashboard" />} />
-          </Routes>
-        </DashboardLayout>
+      {/* Login Route - Always available */}
+      <Route path="/login" element={
+        user ? <Navigate to="/" replace /> : <LoginPage />
       } />
+
+      {/* Protected Routes - Redirect to login if not authenticated */}
+      {!user ? (
+        <Route path="*" element={<Navigate to="/login" replace />} />
+      ) : (
+        <Route path="*" element={
+          <DashboardLayout>
+            <Routes>
+              {/* Root redirect based on current role */}
+              <Route path="/" element={
+                <Navigate to={
+                  user.role === 'Admin' ? '/admin/dashboard' :
+                  user.role === 'Faculty' ? '/faculty/timetable' :
+                  user.role === 'Student' ? '/student/dashboard' :
+                  user.role === 'Parent' ? '/parent/dashboard' :
+                  user.role === 'Support' ? '/support/dashboard' :
+                  '/student/dashboard'
+                } replace />
+              } />
+
+              {/* Admin Routes */}
+              <Route path="/admin/dashboard" element={<AdminDashboard />} />
+
+              {/* Faculty Routes */}
+              <Route path="/faculty/timetable" element={<MyTimetable />} />
+              <Route path="/faculty/works" element={<AssignWorks />} />
+              <Route path="/faculty/attendance" element={<AttendancePage />} />
+              <Route path="/faculty/announcements" element={<FacultyAnnouncements />} />
+              <Route path="/faculty/requests" element={<FacultyRequests />} />
+
+              {/* Student Routes */}
+              <Route path="/student/dashboard" element={<StudentDashboard />} />
+              <Route path="/student/quiz" element={<QuizPage />} />
+              <Route path="/student/news" element={<NewsPage />} />
+              <Route path="/student/ai-chat" element={<AIChatPage />} />
+              <Route path="/student/timetable" element={<StudentTimetable />} />
+              <Route path="/student/works" element={<MyWorks />} />
+              <Route path="/student/attendance" element={<MyAttendance />} />
+              <Route path="/student/announcements" element={<StudentAnnouncements />} />
+              <Route path="/student/requests" element={<StudentRequests />} />
+
+              {/* Parent Routes */}
+              <Route path="/parent/dashboard" element={<ParentDashboard />} />
+
+              {/* Support Routes */}
+              <Route path="/support/dashboard" element={<SupportDashboard />} />
+
+              {/* Shared Routes */}
+              <Route path="/profile" element={<ProfilePage />} />
+
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </DashboardLayout>
+        } />
+      )}
     </Routes>
   );
 };
