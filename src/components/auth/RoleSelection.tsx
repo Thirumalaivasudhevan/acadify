@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
-import { GraduationCap, UserCog, Users, UserCheck, Shield, Headphones } from 'lucide-react';
+import { GraduationCap, UserCog, Users, UserCheck, Headphones } from 'lucide-react';
 import type { AppRole } from '@/types/auth';
 
 interface RoleSelectionProps {
@@ -11,19 +11,12 @@ interface RoleSelectionProps {
 const RoleSelection: React.FC<RoleSelectionProps> = ({ onSelectRole }) => {
   const roles = [
     {
-      role: 'super_admin' as AppRole,
-      title: 'Super Admin',
-      description: 'Organization-wide management',
-      icon: Shield,
-      color: 'text-red-500',
-      disabled: true, // Created at org setup only
-    },
-    {
       role: 'admin' as AppRole,
       title: 'Admin',
-      description: 'Department management',
+      description: 'Institution management & oversight',
       icon: UserCog,
       color: 'text-purple-500',
+      hint: 'Creates new institution or joins existing',
     },
     {
       role: 'staff' as AppRole,
@@ -31,6 +24,7 @@ const RoleSelection: React.FC<RoleSelectionProps> = ({ onSelectRole }) => {
       description: 'Teaching and management',
       icon: Users,
       color: 'text-blue-500',
+      hint: 'Requires institution code',
     },
     {
       role: 'student' as AppRole,
@@ -38,6 +32,7 @@ const RoleSelection: React.FC<RoleSelectionProps> = ({ onSelectRole }) => {
       description: 'Student portal access',
       icon: GraduationCap,
       color: 'text-green-500',
+      hint: 'Requires institution code',
     },
     {
       role: 'parent' as AppRole,
@@ -45,6 +40,7 @@ const RoleSelection: React.FC<RoleSelectionProps> = ({ onSelectRole }) => {
       description: 'Monitor child progress',
       icon: UserCheck,
       color: 'text-orange-500',
+      hint: 'Requires institution code',
     },
     {
       role: 'support' as AppRole,
@@ -52,7 +48,7 @@ const RoleSelection: React.FC<RoleSelectionProps> = ({ onSelectRole }) => {
       description: 'Technical assistance',
       icon: Headphones,
       color: 'text-cyan-500',
-      disabled: true, // Created by Super Admin only
+      hint: 'Requires institution code',
     },
   ];
 
@@ -75,26 +71,21 @@ const RoleSelection: React.FC<RoleSelectionProps> = ({ onSelectRole }) => {
           </div>
         </CardHeader>
         
-        <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {roles.map((roleItem) => {
             const Icon = roleItem.icon;
             return (
               <Button
                 key={roleItem.role}
                 variant="outline"
-                className={`h-auto p-6 flex flex-col items-center gap-3 hover:scale-105 transition-all ${
-                  roleItem.disabled ? 'opacity-50 cursor-not-allowed' : ''
-                }`}
-                onClick={() => !roleItem.disabled && onSelectRole(roleItem.role)}
-                disabled={roleItem.disabled}
+                className="h-auto p-6 flex flex-col items-center gap-3 hover:scale-105 transition-all"
+                onClick={() => onSelectRole(roleItem.role)}
               >
                 <Icon className={`h-12 w-12 ${roleItem.color}`} />
                 <div className="text-center">
                   <div className="font-semibold text-lg">{roleItem.title}</div>
                   <div className="text-sm text-muted-foreground">{roleItem.description}</div>
-                  {roleItem.disabled && (
-                    <div className="text-xs text-amber-500 mt-1">Admin Creation Only</div>
-                  )}
+                  <div className="text-xs text-primary/70 mt-1">{roleItem.hint}</div>
                 </div>
               </Button>
             );
