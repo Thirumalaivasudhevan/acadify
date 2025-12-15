@@ -12,18 +12,14 @@ interface VerificationPendingProps {
 
 const VerificationPending: React.FC<VerificationPendingProps> = ({ role, status, onLogout }) => {
   const approverRole: Record<AppRole, string> = {
-    master_owner: 'System Access',
-    super_admin: 'Master Owner',
-    admin: 'Super Admin',
+    admin: 'Existing Admin',
     staff: 'Admin',
     student: 'Faculty',
     parent: 'Faculty (via Student)',
-    support: 'Super Admin',
+    support: 'Admin',
   };
 
   const roleNames: Record<AppRole, string> = {
-    master_owner: 'Master Owner',
-    super_admin: 'Super Admin',
     admin: 'Admin',
     staff: 'Faculty/Staff',
     student: 'Student',

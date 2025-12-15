@@ -37,8 +37,6 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ role, onBack, onSub
   const { toast } = useToast();
 
   const roleNames: Record<AppRole, string> = {
-    master_owner: 'Master Owner',
-    super_admin: 'Super Admin',
     admin: 'Admin',
     staff: 'Faculty/Staff',
     student: 'Student',
@@ -156,8 +154,8 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ role, onBack, onSub
                 />
               </div>
               <p className="text-xs text-muted-foreground">
-                {role === 'super_admin' 
-                  ? 'Create a unique code for your institution'
+                {role === 'admin' 
+                  ? 'Create a new code or use existing institution code'
                   : 'Enter the code provided by your institution'}
               </p>
             </div>

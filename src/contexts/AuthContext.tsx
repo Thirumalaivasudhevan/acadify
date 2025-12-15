@@ -55,8 +55,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                   }
 
                   const roleMap: Record<AppRole, User['role']> = {
-                    'master_owner': 'MasterOwner',
-                    'super_admin': 'SuperAdmin',
                     'admin': 'Admin',
                     'staff': 'Faculty',
                     'student': 'Student',
@@ -182,8 +180,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
 
         // Handle institution code
-        if (role === 'super_admin') {
-          // SuperAdmin creates a new institution
+        if (role === 'admin') {
+          // Admin creates a new institution OR joins existing one
           const { data: existingOrg } = await supabase
             .from('organizations')
             .select('id')
@@ -191,26 +189,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             .single();
 
           if (existingOrg) {
-            setIsLoading(false);
-            return { success: false, error: 'Institution code already exists. Please choose a different code.' };
+            // If institution exists, admin joins it (needs approval from existing admin)
+            organizationId = existingOrg.id;
+          } else {
+            // Create new institution
+            const { data: newOrg, error: orgError } = await supabase
+              .from('organizations')
+              .insert({
+                name: fullName + "'s Institution",
+                email: email,
+                institution_code: institutionCode,
+              })
+              .select('id')
+              .single();
+
+            if (orgError || !newOrg) {
+              setIsLoading(false);
+              return { success: false, error: 'Failed to create institution' };
+            }
+
+            organizationId = newOrg.id;
           }
-
-          const { data: newOrg, error: orgError } = await supabase
-            .from('organizations')
-            .insert({
-              name: fullName + "'s Institution",
-              email: email,
-              institution_code: institutionCode,
-            })
-            .select('id')
-            .single();
-
-          if (orgError || !newOrg) {
-            setIsLoading(false);
-            return { success: false, error: 'Failed to create institution' };
-          }
-
-          organizationId = newOrg.id;
         } else {
           // Other roles must use existing institution code
           const { data: org, error: orgError } = await supabase
